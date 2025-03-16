@@ -4,11 +4,8 @@ import AuthCard from "./auth/AuthCard";
 
 const Home = () => {
   const handleAuthSuccess = () => {
-    console.log(
-      "Authentication successful, would redirect to dashboard in a real app",
-    );
-    // In a real app, this would redirect to the dashboard or home page
-    // navigate('/dashboard');
+    console.log("Authentication successful, redirecting to dashboard");
+    // This will be handled in the AuthCard component
   };
 
   return (

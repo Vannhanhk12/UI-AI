@@ -32,10 +32,12 @@ const AuthCard = ({
     setIsLoading(false);
     setAnimationState({
       type: "success",
-      message: "Login successful! Redirecting...",
+      message: "Login successful! Redirecting to dashboard...",
     });
     setTimeout(() => {
       onAuthSuccess();
+      // Navigate to dashboard after successful login
+      window.location.href = "/dashboard";
     }, 2000);
   };
 
@@ -43,10 +45,12 @@ const AuthCard = ({
     setIsLoading(false);
     setAnimationState({
       type: "success",
-      message: "Account created successfully! Redirecting...",
+      message: "Account created successfully! Redirecting to dashboard...",
     });
     setTimeout(() => {
       onAuthSuccess();
+      // Navigate to dashboard after successful signup
+      window.location.href = "/dashboard";
     }, 2000);
   };
 
