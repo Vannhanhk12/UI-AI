@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import TaskList from "./TaskList";
 import StreakCalendar from "./StreakCalendar";
+import Navbar from "../layout/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -74,8 +75,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      {/* Navbar */}
+      <Navbar />
+
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
