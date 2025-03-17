@@ -24,6 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import TaskList from "./TaskList";
 import StreakCalendar from "./StreakCalendar";
+import TaskPieChart from "./TaskPieChart";
+import RecentActivities from "./RecentActivities";
+import DailyHabits from "./DailyHabits";
 import Navbar from "../layout/Navbar";
 
 const Dashboard = () => {
@@ -36,6 +39,8 @@ const Dashboard = () => {
     productivity: 78,
     currentStreak: 5,
     longestStreak: 12,
+    focusTime: "4.5 giờ",
+    weeklyGoal: 68,
   };
 
   const recentTasks = [
@@ -69,6 +74,29 @@ const Dashboard = () => {
     },
   ];
 
+  // Task pie chart data
+  const taskPieData = [
+    { name: 'Completed', value: 65, color: '#10B981' },
+    { name: 'In Progress', value: 25, color: '#3B82F6' },
+    { name: 'Pending', value: 10, color: '#F59E0B' },
+  ];
+
+  // Recent activities data
+  const recentActivities = [
+    { activity: 'Hoàn thành Task "Phân tích dữ liệu"', time: '2 giờ trước', icon: 'check' },
+    { activity: 'Đã thêm task mới', time: '3 giờ trước', icon: 'plus' },
+    { activity: 'Chỉnh sửa mục tiêu tuần', time: '5 giờ trước', icon: 'edit' },
+    { activity: 'Đạt 95% hiệu suất', time: 'Hôm qua', icon: 'chart' },
+  ];
+
+  // Daily habits data
+  const dailyHabits = [
+    { habit: 'Đọc sách', streak: 5, target: 30, progress: 65 },
+    { habit: 'Tập thể dục', streak: 12, target: 30, progress: 85 },
+    { habit: 'Học ngoại ngữ', streak: 3, target: 30, progress: 45 },
+    { habit: 'Thiền', streak: 8, target: 30, progress: 72 },
+  ];
+
   const handleCreateTask = () => {
     navigate("/tasks/new");
   };
@@ -78,18 +106,31 @@ const Dashboard = () => {
       {/* Navbar */}
       <Navbar />
 
-      {/* Header */}
+      {/* Header with Today's Date */}
       <header className="bg-white shadow-sm mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <Button
-              onClick={handleCreateTask}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <PlusCircle size={16} />
-              Create New Task
-            </Button>
+            <div className="flex justify-between items-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-lg px-4 py-2 flex items-center"
+              >
+                <span className="text-sm text-gray-500">Today: </span>
+                <span className="ml-2 font-medium">
+                  {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                </span>
+              </motion.div>
+              <Button
+                onClick={handleCreateTask}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 ml-4"
+              >
+                <PlusCircle size={16} />
+                Create New Task
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -165,25 +206,22 @@ const Dashboard = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Productivity
+                  Thời gian tập trung
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
                   <div className="mr-4 rounded-full bg-blue-100 p-2">
-                    <TrendingUp className="h-6 w-6 text-blue-600" />
+                    <Clock className="h-6 w-6 text-blue-600" />
                   </div>
-                  <div className="w-full">
-                    <div className="flex justify-between mb-1">
-                      <div className="text-3xl font-bold">
-                        {stats.productivity}%
-                      </div>
-                      <span className="text-xs text-blue-600 flex items-center">
-                        <ArrowUpRight className="h-3 w-3 mr-1" />
-                        5%
-                      </span>
+                  <div>
+                    <div className="text-3xl font-bold">
+                      {stats.focusTime}
                     </div>
-                    <Progress value={stats.productivity} className="h-2" />
+                    <p className="text-xs text-blue-600 flex items-center">
+                      <ArrowUpRight className="h-3 w-3 mr-1" />
+                      +30 phút
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -198,21 +236,25 @@ const Dashboard = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Current Streak
+                  Mục tiêu tuần
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
                   <div className="mr-4 rounded-full bg-purple-100 p-2">
-                    <Flame className="h-6 w-6 text-purple-600" />
+                    <TrendingUp className="h-6 w-6 text-purple-600" />
                   </div>
-                  <div>
-                    <div className="text-3xl font-bold">
-                      {stats.currentStreak} days
+                  <div className="w-full">
+                    <div className="flex justify-between mb-1">
+                      <div className="text-3xl font-bold">
+                        {stats.weeklyGoal}%
+                      </div>
+                      <span className="text-xs text-purple-600 flex items-center">
+                        <ArrowUpRight className="h-3 w-3 mr-1" />
+                        5%
+                      </span>
                     </div>
-                    <p className="text-xs text-purple-600">
-                      Longest: {stats.longestStreak} days
-                    </p>
+                    <Progress value={stats.weeklyGoal} className="h-2" />
                   </div>
                 </div>
               </CardContent>
@@ -220,8 +262,8 @@ const Dashboard = () => {
           </motion.div>
         </div>
 
-        {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main content grid - First row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Task list */}
           <motion.div
             className="lg:col-span-2"
@@ -261,82 +303,70 @@ const Dashboard = () => {
             </Card>
           </motion.div>
 
-          {/* Streak calendar */}
+          {/* Task Pie Chart */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <Card className="border-none shadow-md h-full">
-              <CardHeader>
-                <CardTitle>Activity Streak</CardTitle>
-                <CardDescription>
-                  Your daily task completion record
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <StreakCalendar />
-              </CardContent>
-              <CardFooter className="border-t pt-4">
-                <div className="w-full flex justify-between text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-sm bg-green-200"></div>
-                    <span>1-3 tasks</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-sm bg-green-400"></div>
-                    <span>4-6 tasks</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-sm bg-green-600"></div>
-                    <span>7+ tasks</span>
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
+            <TaskPieChart data={taskPieData} />
           </motion.div>
         </div>
 
-        {/* Performance chart */}
+        {/* Main content grid - Second row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Recent Activities */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <RecentActivities activities={recentActivities} />
+          </motion.div>
+
+          {/* Daily Habits */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+          >
+            <DailyHabits habits={dailyHabits} />
+          </motion.div>
+        </div>
+
+        {/* Streak calendar */}
         <motion.div
-          className="mt-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+          className="mb-6"
         >
           <Card className="border-none shadow-md">
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Performance Overview</CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    Weekly
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    Monthly
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    Yearly
-                  </Button>
-                </div>
-              </div>
+              <CardTitle>Activity Streak</CardTitle>
               <CardDescription>
-                Track your task completion rate over time
+                Your daily task completion record
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px] flex items-center justify-center text-gray-500">
-                <div className="text-center">
-                  <BarChart className="h-16 w-16 mx-auto text-gray-300" />
-                  <p className="mt-2">
-                    Performance chart visualization would appear here
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    Connects to your task history data
-                  </p>
+              <StreakCalendar />
+            </CardContent>
+            <CardFooter className="border-t pt-4">
+              <div className="w-full flex justify-between text-sm text-gray-500">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-sm bg-green-200"></div>
+                  <span>1-3 tasks</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-sm bg-green-400"></div>
+                  <span>4-6 tasks</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-sm bg-green-600"></div>
+                  <span>7+ tasks</span>
                 </div>
               </div>
-            </CardContent>
+            </CardFooter>
           </Card>
         </motion.div>
       </main>

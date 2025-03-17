@@ -37,6 +37,7 @@ const LoginForm = ({
   isLoading = false,
 }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -52,6 +53,17 @@ const LoginForm = ({
     setTimeout(() => {
       onSuccess();
     }, 1500);
+  };
+  
+  // Add Google sign-in handler
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
+    
+    // Define your API base URL - make sure this is set in your .env file
+    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    
+    // Redirect to Google OAuth endpoint
+    window.location.href = `${apiBaseUrl}/auth/google`;
   };
 
   return (
@@ -168,8 +180,9 @@ const LoginForm = ({
           <Button
             variant="outline"
             type="button"
-            disabled={isLoading}
+            disabled={isLoading || googleLoading}
             className="flex items-center justify-center gap-2"
+            onClick={handleGoogleLogin}
           >
             <svg
               viewBox="0 0 24 24"
@@ -196,7 +209,14 @@ const LoginForm = ({
                 />
               </g>
             </svg>
-            Sign in with Google
+            {googleLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              "Sign in with Google"
+            )}
           </Button>
         </div>
 
