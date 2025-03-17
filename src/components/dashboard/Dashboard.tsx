@@ -29,6 +29,17 @@ import RecentActivities from "./RecentActivities";
 import DailyHabits from "./DailyHabits";
 import Navbar from "../layout/Navbar";
 
+type TaskStatus = "completed" | "in-progress" | "pending";
+type TaskPriority = "high" | "medium" | "low";
+
+interface Task {
+  id: number;
+  title: string;
+  status: TaskStatus;
+  dueDate: string;
+  priority: TaskPriority;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
 
@@ -43,7 +54,9 @@ const Dashboard = () => {
     weeklyGoal: 68,
   };
 
-  const recentTasks = [
+  // Task type is now imported from TaskList component
+
+  const recentTasks: Task[] = [
     {
       id: 1,
       title: "Complete project proposal",
