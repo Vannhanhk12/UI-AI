@@ -252,185 +252,191 @@ const AIChatPage = () => {
               </ScrollArea>
             </Card>
 
-            <TabsContent
-              value="chat"
-              className="md:col-span-3 flex flex-col space-y-4 mt-0"
-            >
-              <Card className="flex-1 p-4 flex flex-col overflow-hidden bg-white">
-                <ScrollArea className="flex-1 pr-4">
-                  <div className="space-y-4">
-                    {messages.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-64 text-center">
-                        <motion.div
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ duration: 0.5 }}
-                          className="mb-4"
-                        >
-                          <Bot size={48} className="text-blue-500" />
-                        </motion.div>
-                        <h3 className="text-xl font-medium text-gray-700">
-                          How can I help you today?
-                        </h3>
-                        <p className="text-gray-500 mt-2 max-w-md">
-                          I can analyze your tasks, suggest productivity
-                          improvements, and help you develop effective
-                          strategies.
-                        </p>
-                      </div>
-                    ) : (
-                      messages.map((message) => (
-                        <motion.div
-                          key={message.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                        >
-                          <div
-                            className={`max-w-[80%] rounded-lg p-4 ${message.role === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"}`}
+            <Tabs value={activeTab} className="md:col-span-3">
+              <TabsContent
+                value="chat"
+                className="flex flex-col space-y-4 mt-0 h-full"
+              >
+                <Card className="flex-1 p-4 flex flex-col overflow-hidden bg-white">
+                  <ScrollArea className="flex-1 pr-4">
+                    <div className="space-y-4">
+                      {messages.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-64 text-center">
+                          <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="mb-4"
                           >
-                            <div className="flex items-center space-x-2 mb-2">
-                              {message.role === "assistant" && (
-                                <Avatar className="h-6 w-6 bg-blue-700">
-                                  <Bot size={14} className="text-white" />
-                                </Avatar>
-                              )}
-                              <span className="text-xs opacity-70">
-                                {formatDate(message.timestamp)}
-                              </span>
+                            <Bot size={48} className="text-blue-500" />
+                          </motion.div>
+                          <h3 className="text-xl font-medium text-gray-700">
+                            How can I help you today?
+                          </h3>
+                          <p className="text-gray-500 mt-2 max-w-md">
+                            I can analyze your tasks, suggest productivity
+                            improvements, and help you develop effective
+                            strategies.
+                          </p>
+                        </div>
+                      ) : (
+                        messages.map((message) => (
+                          <motion.div
+                            key={message.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                          >
+                            <div
+                              className={`max-w-[80%] rounded-lg p-4 ${message.role === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"}`}
+                            >
+                              <div className="flex items-center space-x-2 mb-2">
+                                {message.role === "assistant" && (
+                                  <Avatar className="h-6 w-6 bg-blue-700">
+                                    <Bot size={14} className="text-white" />
+                                  </Avatar>
+                                )}
+                                <span className="text-xs opacity-70">
+                                  {formatDate(message.timestamp)}
+                                </span>
+                              </div>
+                              <p>{message.content}</p>
                             </div>
-                            <p>{message.content}</p>
+                          </motion.div>
+                        ))
+                      )}
+                      {isLoading && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="flex justify-start"
+                        >
+                          <div className="bg-gray-100 rounded-lg p-4 max-w-[80%]">
+                            <div className="flex items-center space-x-2">
+                              <Avatar className="h-6 w-6 bg-blue-700">
+                                <Bot size={14} className="text-white" />
+                              </Avatar>
+                              <div className="flex space-x-1">
+                                <motion.div
+                                  animate={{ y: [0, -5, 0] }}
+                                  transition={{
+                                    repeat: Infinity,
+                                    duration: 1,
+                                    delay: 0,
+                                  }}
+                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                />
+                                <motion.div
+                                  animate={{ y: [0, -5, 0] }}
+                                  transition={{
+                                    repeat: Infinity,
+                                    duration: 1,
+                                    delay: 0.2,
+                                  }}
+                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                />
+                                <motion.div
+                                  animate={{ y: [0, -5, 0] }}
+                                  transition={{
+                                    repeat: Infinity,
+                                    duration: 1,
+                                    delay: 0.4,
+                                  }}
+                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                />
+                              </div>
+                            </div>
                           </div>
                         </motion.div>
-                      ))
-                    )}
-                    {isLoading && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex justify-start"
-                      >
-                        <div className="bg-gray-100 rounded-lg p-4 max-w-[80%]">
-                          <div className="flex items-center space-x-2">
-                            <Avatar className="h-6 w-6 bg-blue-700">
-                              <Bot size={14} className="text-white" />
-                            </Avatar>
-                            <div className="flex space-x-1">
-                              <motion.div
-                                animate={{ y: [0, -5, 0] }}
-                                transition={{
-                                  repeat: Infinity,
-                                  duration: 1,
-                                  delay: 0,
-                                }}
-                                className="w-2 h-2 bg-blue-500 rounded-full"
-                              />
-                              <motion.div
-                                animate={{ y: [0, -5, 0] }}
-                                transition={{
-                                  repeat: Infinity,
-                                  duration: 1,
-                                  delay: 0.2,
-                                }}
-                                className="w-2 h-2 bg-blue-500 rounded-full"
-                              />
-                              <motion.div
-                                animate={{ y: [0, -5, 0] }}
-                                transition={{
-                                  repeat: Infinity,
-                                  duration: 1,
-                                  delay: 0.4,
-                                }}
-                                className="w-2 h-2 bg-blue-500 rounded-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </ScrollArea>
-
-                <div className="mt-4 flex items-end space-x-2">
-                  <Textarea
-                    placeholder="Ask about your productivity, task patterns, or strategies..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                      }
-                    }}
-                    className="flex-1 min-h-[80px] resize-none"
-                  />
-                  <Button
-                    onClick={handleSendMessage}
-                    disabled={isLoading || !input.trim()}
-                    className="h-10 w-10"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="history" className="md:col-span-3 mt-0">
-              <Card className="p-6 bg-white">
-                <h2 className="text-xl font-semibold mb-4">Chat Analytics</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-blue-700">
-                      Total Conversations
-                    </h3>
-                    <p className="text-2xl font-bold">{chatHistories.length}</p>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-green-700">
-                      Most Active Day
-                    </h3>
-                    <p className="text-2xl font-bold">Tuesday</p>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-purple-700">
-                      Common Topics
-                    </h3>
-                    <p className="text-lg font-medium">Productivity, Goals</p>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-semibold mb-3">Recent Insights</h3>
-                <div className="space-y-3">
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Task Completion Pattern</h4>
-                      <span className="text-xs text-gray-500">
-                        Generated yesterday
-                      </span>
+                      )}
+                      <div ref={messagesEndRef} />
                     </div>
-                    <p className="text-gray-700">
-                      You complete 37% more tasks when you start before 10 AM.
-                      Consider scheduling important work earlier in the day.
-                    </p>
+                  </ScrollArea>
+
+                  <div className="mt-4 flex items-end space-x-2">
+                    <Textarea
+                      placeholder="Ask about your productivity, task patterns, or strategies..."
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                      className="flex-1 min-h-[80px] resize-none"
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      disabled={isLoading || !input.trim()}
+                      className="h-10 w-10"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Focus Time Analysis</h4>
-                      <span className="text-xs text-gray-500">
-                        Generated 3 days ago
-                      </span>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="history" className="md:col-span-3 mt-0">
+                <Card className="p-6 bg-white">
+                  <h2 className="text-xl font-semibold mb-4">Chat Analytics</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-blue-700">
+                        Total Conversations
+                      </h3>
+                      <p className="text-2xl font-bold">
+                        {chatHistories.length}
+                      </p>
                     </div>
-                    <p className="text-gray-700">
-                      Your average focus session lasts 32 minutes. Research
-                      suggests 52-minute work periods followed by 17-minute
-                      breaks for optimal productivity.
-                    </p>
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-green-700">
+                        Most Active Day
+                      </h3>
+                      <p className="text-2xl font-bold">Tuesday</p>
+                    </div>
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-purple-700">
+                        Common Topics
+                      </h3>
+                      <p className="text-lg font-medium">Productivity, Goals</p>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </TabsContent>
+
+                  <h3 className="text-lg font-semibold mb-3">
+                    Recent Insights
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">Task Completion Pattern</h4>
+                        <span className="text-xs text-gray-500">
+                          Generated yesterday
+                        </span>
+                      </div>
+                      <p className="text-gray-700">
+                        You complete 37% more tasks when you start before 10 AM.
+                        Consider scheduling important work earlier in the day.
+                      </p>
+                    </div>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">Focus Time Analysis</h4>
+                        <span className="text-xs text-gray-500">
+                          Generated 3 days ago
+                        </span>
+                      </div>
+                      <p className="text-gray-700">
+                        Your average focus session lasts 32 minutes. Research
+                        suggests 52-minute work periods followed by 17-minute
+                        breaks for optimal productivity.
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
