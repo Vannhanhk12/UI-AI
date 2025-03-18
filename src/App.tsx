@@ -22,6 +22,7 @@ const LeaderboardPage = lazy(
   () => import("./components/leaderboard/LeaderboardPage"),
 );
 const HabitsPage = lazy(() => import("./components/habits/HabitsPage"));
+const BlogsPage = lazy(() => import("./components/blogs/BlogsPage"));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -75,6 +76,7 @@ function App() {
               <Route path="/streaks" element={<StreaksPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/habits" element={<HabitsPage />} />
+              <Route path="/blogs" element={<BlogsPage />} />
               <Route path="/ai-chat" element={<div>AI Assistant Page</div>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/about" element={<About />} />
