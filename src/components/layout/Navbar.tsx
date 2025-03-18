@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { User, Home, BarChart2, FileText, Code, Menu, X, LogOut } from "lucide-react";
+import {
+  User,
+  Home,
+  BarChart2,
+  FileText,
+  Code,
+  Menu,
+  X,
+  Bot,
+  LogOut
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -48,6 +58,7 @@ const Navbar = () => {
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: <Home size={18} /> },
     { name: "Tasks", path: "/tasks", icon: <FileText size={18} /> },
+    { name: "AI Assistant", path: "/ai-chat", icon: <Bot size={18} /> },
     { name: "Profile", path: "/profile", icon: <User size={18} /> },
     { name: "About Nyan", path: "/about", icon: <Code size={18} /> },
   ];
