@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +36,14 @@ interface LoginFormProps {
 const LoginForm = ({
   onSuccess = () => {},
   onToggleForm = () => {},
-  isLoading = false,
+  isLoading: externalLoading = false,
 }: LoginFormProps) => {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isLoading = externalLoading || isSubmitting;
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -47,21 +53,65 @@ const LoginForm = ({
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    // In a real app, this would call an authentication service
-    console.log("Login data:", data);
-    setTimeout(() => {
+  const onSubmit = async (data: LoginFormValues) => {
+    setIsSubmitting(true);
+    try {
+      const apiUrl = `${import.meta.env.VITE_API_URL}/auth/login`;
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Login failed");
+      }
+
+      // Login successful
+      const { accessToken, refreshToken, user } = responseData;
+
+      // Save tokens and user info via auth context
+      login(accessToken, refreshToken, user);
+
+      toast.success("Login successful!");
       onSuccess();
-    }, 1500);
+    } catch (error) {
+      console.error("Login error:", error);
+
+      if (error instanceof Error) {
+        if (
+          error.message.toLowerCase().includes("credentials") ||
+          error.message.toLowerCase().includes("password") ||
+          error.message.toLowerCase().includes("email")
+        ) {
+          form.setError("email", { message: "Invalid email or password" });
+          form.setError("password", { message: "Invalid email or password" });
+        } else {
+          toast.error(error.message || "Login failed. Please try again.");
+        }
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  
+
   // Add Google sign-in handler
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    
+
     // Define your API base URL - make sure this is set in your .env file
-    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    
+    const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
     // Redirect to Google OAuth endpoint
     window.location.href = `${apiBaseUrl}/auth/google`;
   };
@@ -221,10 +271,10 @@ const LoginForm = ({
         </div>
 
         <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
+          Don't have an account?{" "}
           <Button
             variant="link"
-            className="p-0 font-normal"
+            className="px-0 font-normal"
             onClick={onToggleForm}
             disabled={isLoading}
           >

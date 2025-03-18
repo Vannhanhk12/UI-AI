@@ -2,6 +2,7 @@
 import { Suspense, lazy } from "react";
 import { useRoutes, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Toaster } from "sonner";
 import Home from "./components/home";
 import routes from "tempo-routes";
 import DashboardLayout from "./components/layout/DashboardLayout";
@@ -43,6 +44,7 @@ function App() {
         }
       >
         <>
+          <Toaster position="top-center" richColors />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<AuthPage />} />
