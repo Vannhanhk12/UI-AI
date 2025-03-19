@@ -305,19 +305,30 @@ const TasksPage: React.FC = () => {
               <div className="mt-6 flex justify-center">
                 <motion.div
                   animate={{
-                    x: [0, 10, 0, -10, 0],
+                    x: [-50, 50],
+                    scaleX: [1, 1, -1, -1, 1],
                   }}
                   transition={{
-                    repeat: Infinity,
-                    duration: 1,
-                    ease: "easeInOut",
+                    x: {
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      duration: 2,
+                      ease: "easeInOut",
+                    },
+                    scaleX: {
+                      repeat: Infinity,
+                      repeatType: "loop",
+                      duration: 4,
+                      times: [0, 0.25, 0.5, 0.75, 1],
+                      ease: "easeInOut",
+                    },
                   }}
-                  className="w-24 h-24"
+                  className="w-32 h-32"
                 >
                   <img
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=pikachu&mouth=smile&eyes=happy"
-                    alt="Motivational character"
-                    className="w-full h-full"
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+                    alt="Pikachu running for motivation"
+                    className="w-full h-full object-contain"
                   />
                 </motion.div>
               </div>
