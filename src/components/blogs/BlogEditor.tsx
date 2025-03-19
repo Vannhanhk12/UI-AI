@@ -1,285 +1,218 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
 import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import {
-  X,
-  Bold,
-  Italic,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  List,
-  ListOrdered,
-  Image as ImageIcon,
-  Link,
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Eye, Save, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import FileUpload from "./FileUpload";
+import RichTextEditor from "./RichTextEditor";
+import CategorySelector from "./CategorySelector";
+import { CreateBlogDto } from "../../types/blog";
+import { createBlog } from "../../services/api";
 
 interface BlogEditorProps {
   onSave: (blog: any) => void;
+  onCancel: () => void;
 }
 
-const BlogEditor: React.FC<BlogEditorProps> = ({ onSave }) => {
+const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState<string[]>([]);
+  const [excerpt, setExcerpt] = useState("");
   const [coverImage, setCoverImage] = useState("");
-  const editorRef = useRef<HTMLDivElement>(null);
+  const [readTime, setReadTime] = useState("5 min read");
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [isHidden, setIsHidden] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState("edit");
 
-  const handleAddCategory = () => {
-    if (category && !categories.includes(category)) {
-      setCategories([...categories, category]);
-      setCategory("");
+  const handleCoverImageUpload = (url: string) => {
+    setCoverImage(url);
+  };
+
+  const calculateReadTime = (text: string) => {
+    const wordsPerMinute = 200;
+    const textLength = text.split(" ").length;
+    if (textLength > 0) {
+      const value = Math.ceil(textLength / wordsPerMinute);
+      setReadTime(`${value} min read`);
     }
   };
 
-  const handleRemoveCategory = (categoryToRemove: string) => {
-    setCategories(categories.filter((c) => c !== categoryToRemove));
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
+    calculateReadTime(newContent.replace(/<[^>]*>/g, " "));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddCategory();
-    }
-  };
-
-  const handleSave = () => {
+  const handleSubmit = async () => {
     if (!title.trim()) {
-      alert("Please enter a title");
+      toast.error("Please enter a title");
       return;
     }
 
     if (!content.trim()) {
-      alert("Please enter content");
+      toast.error("Please enter content");
       return;
     }
 
-    onSave({
-      title,
-      content,
-      categories: categories.length > 0 ? categories : ["General"],
-      coverImage:
-        coverImage ||
-        "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
-    });
-  };
+    setIsSubmitting(true);
 
-  const formatText = (command: string, value: string = "") => {
-    document.execCommand(command, false, value);
-    if (editorRef.current) {
-      editorRef.current.focus();
-    }
-  };
+    try {
+      const blogData: CreateBlogDto = {
+        title,
+        content,
+        excerpt:
+          excerpt || content.replace(/<[^>]*>/g, " ").substring(0, 150) + "...",
+        coverImage,
+        readTime,
+        categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
+        isHidden,
+      };
 
-  const handleImageUpload = () => {
-    const url = prompt("Enter image URL:");
-    if (url) {
-      document.execCommand("insertImage", false, url);
-    }
-  };
-
-  const handleLinkInsert = () => {
-    const url = prompt("Enter link URL:");
-    if (url) {
-      document.execCommand("createLink", false, url);
+      const response = await createBlog(blogData);
+      toast.success("Blog published successfully!");
+      onSave(response);
+    } catch (error) {
+      console.error("Error creating blog:", error);
+      // Error is already handled in the API service
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" onClick={onCancel} className="gap-1">
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
+          <TabsList>
+            <TabsTrigger value="edit">Edit</TabsTrigger>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setIsHidden(!isHidden)}
+            className="gap-1"
+          >
+            <Eye className="h-4 w-4" />
+            {isHidden ? "Private" : "Public"}
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="bg-blue-600 hover:bg-blue-700 gap-1"
+          >
+            {isSubmitting ? (
+              <motion.div
+                className="h-4 w-4 rounded-full border-2 border-white border-t-transparent"
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+              />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            Publish
+          </Button>
+        </div>
+      </div>
+
       <Card className="bg-white">
         <CardContent className="pt-6">
-          <div className="mb-6">
-            <Label htmlFor="cover-image" className="block mb-2">
-              Cover Image URL
-            </Label>
-            <Input
-              id="cover-image"
-              placeholder="https://example.com/image.jpg"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              className="mb-2"
-            />
-            {coverImage && (
-              <div className="mt-2 relative h-48 overflow-hidden rounded-md">
-                <img
-                  src={coverImage}
-                  alt="Cover preview"
-                  className="w-full h-full object-cover"
+          <Tabs value={activeTab} className="w-full">
+            <TabsContent value="edit" className="mt-0 space-y-6">
+              <div>
+                <Label htmlFor="cover-image" className="block mb-2">
+                  Cover Image
+                </Label>
+                <FileUpload
+                  onFileUpload={handleCoverImageUpload}
+                  currentImage={coverImage}
                 />
               </div>
-            )}
-          </div>
 
-          <div className="mb-6">
-            <Label htmlFor="title" className="block mb-2">
-              Title
-            </Label>
-            <Input
-              id="title"
-              placeholder="Enter your blog title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="text-xl font-bold"
-            />
-          </div>
+              <div>
+                <Label htmlFor="title" className="block mb-2">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  placeholder="Enter your blog title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="text-xl font-bold"
+                />
+              </div>
 
-          <div className="mb-6">
-            <Label htmlFor="categories" className="block mb-2">
-              Categories
-            </Label>
-            <div className="flex items-center">
-              <Input
-                id="categories"
-                placeholder="Add a category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="mr-2"
-              />
-              <Button
-                onClick={handleAddCategory}
-                type="button"
-                variant="outline"
-              >
-                Add
-              </Button>
-            </div>
-            {categories.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {categories.map((cat) => (
-                  <Badge
-                    key={cat}
-                    className="flex items-center gap-1 bg-blue-100 text-blue-800 hover:bg-blue-200"
-                  >
-                    {cat}
-                    <X
-                      className="h-3 w-3 cursor-pointer"
-                      onClick={() => handleRemoveCategory(cat)}
+              <div>
+                <Label htmlFor="excerpt" className="block mb-2">
+                  Excerpt (optional)
+                </Label>
+                <Input
+                  id="excerpt"
+                  placeholder="Brief summary of your blog"
+                  value={excerpt}
+                  onChange={(e) => setExcerpt(e.target.value)}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  If left empty, an excerpt will be generated from your content
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="categories" className="block mb-2">
+                  Categories
+                </Label>
+                <CategorySelector
+                  selectedCategories={categoryIds}
+                  onCategoriesChange={setCategoryIds}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="content" className="block mb-2">
+                  Content
+                </Label>
+                <RichTextEditor
+                  value={content}
+                  onChange={handleContentChange}
+                  placeholder="Write your blog content here..."
+                />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="preview" className="mt-0">
+              <div className="prose prose-lg max-w-none">
+                {coverImage && (
+                  <div className="mb-6 rounded-lg overflow-hidden">
+                    <img
+                      src={coverImage}
+                      alt={title}
+                      className="w-full h-64 object-cover"
                     />
-                  </Badge>
-                ))}
+                  </div>
+                )}
+                <h1 className="text-3xl font-bold mb-4">
+                  {title || "Untitled Blog"}
+                </h1>
+                <div className="flex items-center text-sm text-gray-500 mb-6">
+                  <span>{readTime}</span>
+                </div>
+                {content ? (
+                  <div dangerouslySetInnerHTML={{ __html: content }} />
+                ) : (
+                  <p className="text-gray-400 italic">No content yet...</p>
+                )}
               </div>
-            )}
-          </div>
-
-          <div className="mb-6">
-            <Label htmlFor="content" className="block mb-2">
-              Content
-            </Label>
-            <div className="border rounded-md overflow-hidden">
-              <div className="bg-gray-50 p-2 border-b flex items-center space-x-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("bold")}
-                  className="h-8 w-8 p-0"
-                >
-                  <Bold className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("italic")}
-                  className="h-8 w-8 p-0"
-                >
-                  <Italic className="h-4 w-4" />
-                </Button>
-                <div className="h-6 w-px bg-gray-300 mx-1" />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("justifyLeft")}
-                  className="h-8 w-8 p-0"
-                >
-                  <AlignLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("justifyCenter")}
-                  className="h-8 w-8 p-0"
-                >
-                  <AlignCenter className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("justifyRight")}
-                  className="h-8 w-8 p-0"
-                >
-                  <AlignRight className="h-4 w-4" />
-                </Button>
-                <div className="h-6 w-px bg-gray-300 mx-1" />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("insertUnorderedList")}
-                  className="h-8 w-8 p-0"
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => formatText("insertOrderedList")}
-                  className="h-8 w-8 p-0"
-                >
-                  <ListOrdered className="h-4 w-4" />
-                </Button>
-                <div className="h-6 w-px bg-gray-300 mx-1" />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleImageUpload}
-                  className="h-8 w-8 p-0"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLinkInsert}
-                  className="h-8 w-8 p-0"
-                >
-                  <Link className="h-4 w-4" />
-                </Button>
-              </div>
-              <div
-                ref={editorRef}
-                className="min-h-[300px] p-4 focus:outline-none"
-                contentEditable
-                dangerouslySetInnerHTML={{ __html: content }}
-                onInput={(e) => setContent(e.currentTarget.innerHTML)}
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end space-x-3">
-            <Button variant="outline" onClick={() => onSave(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Publish Blog
-            </Button>
-          </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

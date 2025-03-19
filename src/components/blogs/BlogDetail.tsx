@@ -10,11 +10,16 @@ import {
   Share2,
   BookmarkPlus,
   Clock,
+  Calendar,
+  ThumbsUp,
+  Send,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { Blog, Comment } from "../../types/blog";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface BlogDetailProps {
-  blog: any;
+  blog: Blog;
   onLike: (blogId: string) => void;
   onAddComment: (blogId: string, comment: string) => void;
 }
@@ -25,11 +30,19 @@ const BlogDetail: React.FC<BlogDetailProps> = ({
   onAddComment,
 }) => {
   const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = async () => {
     if (comment.trim()) {
-      onAddComment(blog.id, comment);
-      setComment("");
+      setIsSubmitting(true);
+      try {
+        await onAddComment(blog.id, comment);
+        setComment("");
+      } catch (error) {
+        console.error("Error submitting comment:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -48,11 +61,15 @@ const BlogDetail: React.FC<BlogDetailProps> = ({
 
         <CardContent className="pt-8 pb-6">
           <div className="flex flex-wrap gap-2 mb-4">
-            {blog.categories.map((category: string) => (
-              <Badge key={category} className="bg-blue-100 text-blue-800">
-                {category}
-              </Badge>
-            ))}
+            {blog.categories && blog.categories.length > 0 ? (
+              blog.categories.map((category: string, idx: number) => (
+                <Badge key={idx} className="bg-blue-100 text-blue-800">
+                  {category}
+                </Badge>
+              ))
+            ) : (
+              <Badge className="bg-gray-100 text-gray-800">Uncategorized</Badge>
+            )}
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{blog.title}</h1>
@@ -60,23 +77,36 @@ const BlogDetail: React.FC<BlogDetailProps> = ({
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <Avatar>
-                <AvatarImage src={blog.author.avatar} alt={blog.author.name} />
-                <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
+                <AvatarImage
+                  src={
+                    blog.author.avatar ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${blog.author.username}`
+                  }
+                  alt={blog.author.username}
+                />
+                <AvatarFallback>
+                  {blog.author.username.charAt(0)}
+                </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-medium">{blog.author.name}</p>
-                <p className="text-sm text-gray-500">{blog.author.role}</p>
+                <p className="font-medium">{blog.author.username}</p>
+                <p className="text-sm text-gray-500">
+                  {formatDistanceToNow(new Date(blog.createdAt), {
+                    addSuffix: true,
+                  })}
+                </p>
               </div>
             </div>
 
             <div className="flex items-center text-sm text-gray-500">
-              <Clock className="h-4 w-4 mr-1" />
-              <span className="mr-3">{blog.readTime}</span>
-              <span>
-                {formatDistanceToNow(new Date(blog.publishedAt), {
-                  addSuffix: true,
-                })}
-              </span>
+              {blog.readTime ? (
+                <>
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span className="mr-3">{blog.readTime}</span>
+                </>
+              ) : null}
+              <Calendar className="h-4 w-4 mr-1" />
+              <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
 
@@ -92,13 +122,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({
                 className="flex items-center space-x-1"
                 onClick={() => onLike(blog.id)}
               >
-                <Heart className="h-5 w-5 text-red-500" />
-                <span>{blog.likes} likes</span>
+                <ThumbsUp className="h-5 w-5 text-blue-500" />
+                <span>{blog.upvotes} likes</span>
               </Button>
 
               <Button variant="ghost" className="flex items-center space-x-1">
                 <MessageCircle className="h-5 w-5" />
-                <span>{blog.comments.length} comments</span>
+                <span>{blog.commentCount} comments</span>
               </Button>
             </div>
 
@@ -117,7 +147,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({
 
           <div className="mt-8">
             <h3 className="text-xl font-bold mb-4">
-              Comments ({blog.comments.length})
+              Comments ({blog.commentCount})
             </h3>
 
             <div className="mb-6">
@@ -129,41 +159,72 @@ const BlogDetail: React.FC<BlogDetailProps> = ({
               />
               <Button
                 onClick={handleSubmitComment}
-                disabled={!comment.trim()}
+                disabled={!comment.trim() || isSubmitting}
                 className="bg-blue-600 hover:bg-blue-700"
               >
+                {isSubmitting ? (
+                  <motion.div
+                    className="h-4 w-4 rounded-full border-2 border-white border-t-transparent"
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1,
+                      ease: "linear",
+                    }}
+                  />
+                ) : (
+                  <Send className="h-4 w-4 mr-2" />
+                )}
                 Post Comment
               </Button>
             </div>
 
             <div className="space-y-4">
-              {blog.comments.map((comment: any) => (
-                <div key={comment.id} className="border-b pb-4">
-                  <div className="flex items-start space-x-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={comment.author.avatar}
-                        alt={comment.author.name}
-                      />
-                      <AvatarFallback>
-                        {comment.author.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center">
-                        <p className="font-medium">{comment.author.name}</p>
-                        <span className="mx-2 text-gray-400">•</span>
-                        <p className="text-sm text-gray-500">
-                          {formatDistanceToNow(new Date(comment.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </p>
+              <AnimatePresence>
+                {blog.comments &&
+                  blog.comments.map((comment: Comment, index: number) => (
+                    <motion.div
+                      key={comment.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="border-b pb-4"
+                    >
+                      <div className="flex items-start space-x-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={
+                              comment.author.avatar ||
+                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.author.username}`
+                            }
+                            alt={comment.author.username}
+                          />
+                          <AvatarFallback>
+                            {comment.author.username.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center">
+                            <p className="font-medium">
+                              {comment.author.username}
+                            </p>
+                            <span className="mx-2 text-gray-400">•</span>
+                            <p className="text-sm text-gray-500">
+                              {formatDistanceToNow(
+                                new Date(comment.createdAt),
+                                {
+                                  addSuffix: true,
+                                },
+                              )}
+                            </p>
+                          </div>
+                          <p className="mt-1">{comment.content}</p>
+                        </div>
                       </div>
-                      <p className="mt-1">{comment.content}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                    </motion.div>
+                  ))}
+              </AnimatePresence>
             </div>
           </div>
         </CardContent>

@@ -1,83 +1,123 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
+import { Pagination } from "../ui/pagination";
 import BlogList from "./BlogList";
-import { mockBlogs } from "./mockData";
 import BlogEditor from "./BlogEditor";
 import BlogDetail from "./BlogDetail";
+import { fetchBlogs, likeBlog, addComment } from "../../services/api";
+import { Blog, BlogsResponse } from "../../types/blog";
 
 const BlogsPage = () => {
   const [view, setView] = useState<"list" | "create" | "detail">("list");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBlog, setSelectedBlog] = useState<any>(null);
-  const [blogs, setBlogs] = useState(mockBlogs);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 9,
+    total: 0,
+    totalPages: 0,
+  });
+
+  useEffect(() => {
+    loadBlogs();
+  }, [pagination.page]);
+
+  const loadBlogs = async () => {
+    setIsLoading(true);
+    try {
+      const response: BlogsResponse = await fetchBlogs(
+        pagination.page,
+        pagination.limit,
+      );
+      setBlogs(response.data);
+      setPagination({
+        page: response.page,
+        limit: response.limit,
+        total: response.total,
+        totalPages: response.totalPages,
+      });
+    } catch (error) {
+      console.error("Error loading blogs:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCreateBlog = (newBlog: any) => {
-    const updatedBlogs = [
-      {
-        id: Date.now().toString(),
-        ...newBlog,
-        author: {
-          name: "Current User",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser",
-          role: "Member",
-        },
-        publishedAt: new Date().toISOString(),
-        likes: 0,
-        comments: [],
-        readTime: "5 min read",
-      },
-      ...blogs,
-    ];
-
-    setBlogs(updatedBlogs);
+    loadBlogs(); // Reload blogs to include the new one
     setView("list");
   };
 
-  const handleLike = (blogId: string) => {
-    setBlogs(
-      blogs.map((blog) =>
-        blog.id === blogId ? { ...blog, likes: blog.likes + 1 } : blog,
-      ),
-    );
+  const handleLike = async (blogId: string) => {
+    try {
+      await likeBlog(blogId);
+      // Update the blog in the list
+      setBlogs(
+        blogs.map((blog) =>
+          blog.id === blogId ? { ...blog, upvotes: blog.upvotes + 1 } : blog,
+        ),
+      );
+
+      // Also update the selected blog if it's the one being liked
+      if (selectedBlog && selectedBlog.id === blogId) {
+        setSelectedBlog({
+          ...selectedBlog,
+          upvotes: selectedBlog.upvotes + 1,
+        });
+      }
+    } catch (error) {
+      console.error("Error liking blog:", error);
+    }
   };
 
-  const handleAddComment = (blogId: string, comment: string) => {
-    setBlogs(
-      blogs.map((blog) =>
-        blog.id === blogId
-          ? {
-              ...blog,
-              comments: [
-                ...blog.comments,
-                {
-                  id: Date.now().toString(),
-                  author: {
-                    name: "Current User",
-                    avatar:
-                      "https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser",
-                  },
-                  content: comment,
-                  createdAt: new Date().toISOString(),
-                },
-              ],
-            }
-          : blog,
-      ),
-    );
+  const handleAddComment = async (blogId: string, comment: string) => {
+    try {
+      const response = await addComment(blogId, comment);
+
+      // Update the selected blog with the new comment
+      if (selectedBlog && selectedBlog.id === blogId) {
+        setSelectedBlog({
+          ...selectedBlog,
+          comments: [response, ...selectedBlog.comments],
+          commentCount: selectedBlog.commentCount + 1,
+        });
+      }
+
+      // Update the blog in the list
+      setBlogs(
+        blogs.map((blog) =>
+          blog.id === blogId
+            ? {
+                ...blog,
+                commentCount: blog.commentCount + 1,
+              }
+            : blog,
+        ),
+      );
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      blog.content.toLowerCase().includes(searchQuery.toLowerCase()),
+      (blog.content &&
+        blog.content.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
-  const handleViewBlog = (blog: any) => {
+  const handleViewBlog = (blog: Blog) => {
     setSelectedBlog(blog);
     setView("detail");
+  };
+
+  const handlePageChange = (page: number) => {
+    setPagination((prev) => ({ ...prev, page }));
   };
 
   return (
@@ -117,44 +157,92 @@ const BlogsPage = () => {
               <TabsTrigger value="all">All Blogs</TabsTrigger>
               <TabsTrigger value="popular">Popular</TabsTrigger>
               <TabsTrigger value="recent">Recent</TabsTrigger>
-              <TabsTrigger value="following">Following</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all">
-              <BlogList blogs={filteredBlogs} onViewBlog={handleViewBlog} />
+              {isLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                </div>
+              ) : (
+                <>
+                  <BlogList blogs={filteredBlogs} onViewBlog={handleViewBlog} />
+                  {pagination.totalPages > 1 && (
+                    <div className="mt-8 flex justify-center">
+                      <Pagination
+                        currentPage={pagination.page}
+                        totalPages={pagination.totalPages}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="popular">
-              <BlogList
-                blogs={filteredBlogs.sort((a, b) => b.likes - a.likes)}
-                onViewBlog={handleViewBlog}
-              />
+              {isLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                </div>
+              ) : (
+                <>
+                  <BlogList
+                    blogs={[...filteredBlogs].sort(
+                      (a, b) => b.upvotes - a.upvotes,
+                    )}
+                    onViewBlog={handleViewBlog}
+                  />
+                  {pagination.totalPages > 1 && (
+                    <div className="mt-8 flex justify-center">
+                      <Pagination
+                        currentPage={pagination.page}
+                        totalPages={pagination.totalPages}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="recent">
-              <BlogList
-                blogs={filteredBlogs.sort(
-                  (a, b) =>
-                    new Date(b.publishedAt).getTime() -
-                    new Date(a.publishedAt).getTime(),
-                )}
-                onViewBlog={handleViewBlog}
-              />
-            </TabsContent>
-
-            <TabsContent value="following">
-              <BlogList
-                blogs={filteredBlogs.filter((blog) =>
-                  ["Alex Johnson", "Maria Garcia"].includes(blog.author.name),
-                )}
-                onViewBlog={handleViewBlog}
-              />
+              {isLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                </div>
+              ) : (
+                <>
+                  <BlogList
+                    blogs={[...filteredBlogs].sort(
+                      (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime(),
+                    )}
+                    onViewBlog={handleViewBlog}
+                  />
+                  {pagination.totalPages > 1 && (
+                    <div className="mt-8 flex justify-center">
+                      <Pagination
+                        currentPage={pagination.page}
+                        totalPages={pagination.totalPages}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </TabsContent>
           </Tabs>
         </>
       )}
 
-      {view === "create" && <BlogEditor onSave={handleCreateBlog} />}
+      {view === "create" && (
+        <BlogEditor
+          onSave={handleCreateBlog}
+          onCancel={() => setView("list")}
+        />
+      )}
 
       {view === "detail" && selectedBlog && (
         <BlogDetail
