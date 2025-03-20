@@ -5,6 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { createTask } from "@/services/taskService";
+import { toast } from "react-hot-toast";
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -51,15 +54,31 @@ const TaskForm = () => {
     },
   });
 
-  const onSubmit = (data: TaskFormValues) => {
+  const onSubmit = async (data: TaskFormValues) => {
     console.log("Task data:", data);
-    // In a real app, this would save the task to your backend
-    // Then navigate back to the dashboard
-    setTimeout(() => {
+    
+    try {
+      // Convert the data format to match the API requirements
+      const taskData = {
+        title: data.title,
+        description: data.description || "",
+        deadline: new Date(data.dueDate).toISOString(),
+        estimatedDuration: 30, // Default value, you might want to add this field to your form
+        difficulty: data.priority.toUpperCase() as "EASY" | "MEDIUM" | "HARD",
+        priority: data.priority.toUpperCase() as "LOW" | "MEDIUM" | "HIGH",
+        categoryIds: [data.category] // Convert category to categoryIds array
+      };
+      
+      // Import and call the createTask function
+      await createTask(taskData);
+      
+      toast.success("Task created successfully!");
       navigate("/dashboard");
-    }, 500);
+    } catch (error) {
+      console.error("Error creating task:", error);
+      toast.error("Failed to create task");
+    }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8">
       <div className="max-w-3xl mx-auto px-4">

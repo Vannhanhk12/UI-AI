@@ -26,7 +26,14 @@ import { CalendarIcon } from "lucide-react";
 const TaskForm: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    deadline: Date;
+    estimatedDuration: number;
+    difficulty: "EASY" | "MEDIUM" | "HARD";
+    priority: "LOW" | "MEDIUM" | "HIGH";
+  }>({
     title: "",
     description: "",
     deadline: new Date(),
@@ -55,16 +62,20 @@ const TaskForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     try {
-      // Format the date to ISO string
       const formattedData = {
         ...formData,
         deadline: formData.deadline.toISOString(),
         estimatedDuration: Number(formData.estimatedDuration),
+        difficulty: formData.difficulty,
+        priority: formData.priority,
       };
-
-      await createTask(formattedData);
+  
+      console.log("Sending task data:", formattedData);
+      const result = await createTask(formattedData);
+      console.log("API response:", result);
+      
       toast.success("Task created successfully!");
       navigate("/tasks");
     } catch (error) {
