@@ -1,14 +1,32 @@
-import React, { useRef, useEffect } from "react";
-import { 
-  Bold, Italic, Underline, List, ListOrdered, 
-  AlignLeft, AlignCenter, AlignRight, 
-  Heading1, Heading2, Heading3,
-  Link as LinkIcon, Image as ImageIcon, Code, Quote,
-  Undo, Redo
+import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Image as ImageIcon,
+  Link,
+  Quote,
+  Code,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Heading1,
+  Heading2,
+  CheckSquare,
+  Type,
+  Palette,
 } from "lucide-react";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import { 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -24,278 +42,508 @@ interface RichTextEditorProps {
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
-  placeholder = "Write your content here...",
+  placeholder = "Start writing...",
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const [showToolbar, setShowToolbar] = useState(false);
+  const [selection, setSelection] = useState<Range | null>(null);
+  const [textColor, setTextColor] = useState("#000000");
+  const [backgroundColor, setBackgroundColor] = useState("transparent");
 
+  // Initialize editor with value
   useEffect(() => {
-    // Apply placeholder styling if needed
-    if (editorRef.current) {
-      const editor = editorRef.current;
-      
-      if (!value) {
-        editor.classList.add('empty');
-      } else {
-        editor.classList.remove('empty');
+    if (editorRef.current && value) {
+      editorRef.current.innerHTML = value;
+    }
+  }, []);
+
+  // Save selection when user selects text
+  const saveSelection = () => {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      setSelection(sel.getRangeAt(0).cloneRange());
+    }
+  };
+
+  // Restore selection before applying formatting
+  const restoreSelection = () => {
+    if (selection) {
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(selection);
       }
     }
-  }, [value]);
+  };
 
   const formatText = (command: string, value?: string) => {
+    restoreSelection();
     document.execCommand(command, false, value);
-    
-    if (editorRef.current) {
-      // Focus back on the editor
-      editorRef.current.focus();
-      
-      // Get updated content
-      const updatedContent = editorRef.current.innerHTML;
-      onChange(updatedContent);
-    }
+    updateContent();
+    editorRef.current?.focus();
   };
 
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    const content = e.currentTarget.innerHTML;
-    onChange(content);
-    
-    // Toggle empty class for placeholder
-    if (content === '') {
-      e.currentTarget.classList.add('empty');
-    } else {
-      e.currentTarget.classList.remove('empty');
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    // Prevent default to avoid pasting formatted content
-    e.preventDefault();
-    
-    // Get plain text from clipboard
-    const text = e.clipboardData.getData('text/plain');
-    
-    // Insert at cursor position
-    document.execCommand('insertText', false, text);
-    
-    // Update the content
+  const updateContent = () => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
     }
   };
 
-  // Insert link
-  const insertLink = () => {
-    const url = prompt('Enter the URL');
-    if (url) {
-      formatText('createLink', url);
+  const handleInput = () => {
+    updateContent();
+  };
+
+  const handleSelectionChange = () => {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && sel.toString().length > 0) {
+      saveSelection();
+      setShowToolbar(true);
+    } else if (sel?.toString().length === 0) {
+      setShowToolbar(false);
     }
   };
 
-  // Insert image
-  const insertImage = () => {
-    const url = prompt('Enter the image URL');
-    if (url) {
-      formatText('insertImage', url);
+  const handleMouseUp = () => {
+    handleSelectionChange();
+  };
+
+  const handleKeyUp = (e: React.KeyboardEvent) => {
+    // Don't hide toolbar on arrow keys, shift, ctrl, etc.
+    if (
+      ![
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Shift",
+        "Control",
+        "Alt",
+        "Meta",
+      ].includes(e.key)
+    ) {
+      handleSelectionChange();
     }
   };
+
+  const insertLink = () => {
+    const url = prompt("Enter the URL:");
+    if (url) {
+      formatText("createLink", url);
+    }
+  };
+
+  const insertImage = () => {
+    const url = prompt("Enter the image URL:");
+    if (url) {
+      formatText("insertImage", url);
+    }
+  };
+
+  const insertCheckbox = () => {
+    formatText(
+      "insertHTML",
+      '<div class="checkbox-item"><input type="checkbox" /><span contenteditable="true"> New item</span></div>',
+    );
+  };
+
+  const applyTextColor = (color: string) => {
+    setTextColor(color);
+    formatText("foreColor", color);
+  };
+
+  const applyBackgroundColor = (color: string) => {
+    setBackgroundColor(color);
+    formatText("hiliteColor", color);
+  };
+
+  const colors = [
+    "#000000", // Black
+    "#E03131", // Red
+    "#2F9E44", // Green
+    "#1971C2", // Blue
+    "#F08C00", // Orange
+    "#6741D9", // Purple
+    "#F783AC", // Pink
+    "#868E96", // Gray
+  ];
+
+  const backgroundColors = [
+    "transparent", // None
+    "#FFF3BF", // Yellow
+    "#D3F9D8", // Green
+    "#D0EBFF", // Blue
+    "#FFE3E3", // Red
+    "#EBD6FF", // Purple
+    "#FFF0F6", // Pink
+    "#F1F3F5", // Gray
+  ];
 
   return (
-    <div className="border rounded-md overflow-hidden">
-      <div className="bg-gray-50 p-2 border-b flex flex-wrap items-center gap-1">
+    <div className="relative border rounded-lg overflow-hidden bg-white">
+      {/* Floating toolbar that appears on text selection */}
+      {showToolbar && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          className="absolute z-10 top-2 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 p-1 flex items-center space-x-1"
+        >
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("bold")}
+                >
+                  <Bold className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Bold</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("italic")}
+                >
+                  <Italic className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Italic</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("underline")}
+                >
+                  <Underline className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Underline</TooltipContent>
+            </Tooltip>
+
+            <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Palette className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Text Color</TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent className="p-2">
+                <div className="grid grid-cols-4 gap-1">
+                  {colors.map((color) => (
+                    <button
+                      key={color}
+                      className="w-6 h-6 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      style={{ backgroundColor: color }}
+                      onClick={() => applyTextColor(color)}
+                    />
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <span className="flex items-center justify-center w-4 h-4 border border-gray-400 bg-yellow-100"></span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Highlight</TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent className="p-2">
+                <div className="grid grid-cols-4 gap-1">
+                  {backgroundColors.map((color) => (
+                    <button
+                      key={color}
+                      className={`w-6 h-6 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${color === "transparent" ? "border border-gray-300 bg-white" : ""}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => applyBackgroundColor(color)}
+                    />
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TooltipProvider>
+        </motion.div>
+      )}
+
+      {/* Main toolbar */}
+      <div className="flex items-center p-2 border-b bg-gray-50 flex-wrap gap-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8">
-              Heading
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-sm font-medium"
+            >
+              <Type className="h-4 w-4 mr-1" /> Normal
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => formatText('formatBlock', 'h1')}>
+            <DropdownMenuItem onClick={() => formatText("formatBlock", "<h1>")}>
               <Heading1 className="h-4 w-4 mr-2" />
-              <span>Heading 1</span>
+              <span className="text-xl font-bold">Heading 1</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatText('formatBlock', 'h2')}>
+            <DropdownMenuItem onClick={() => formatText("formatBlock", "<h2>")}>
               <Heading2 className="h-4 w-4 mr-2" />
-              <span>Heading 2</span>
+              <span className="text-lg font-bold">Heading 2</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatText('formatBlock', 'h3')}>
-              <Heading3 className="h-4 w-4 mr-2" />
-              <span>Heading 3</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatText('formatBlock', 'p')}>
+            <DropdownMenuItem onClick={() => formatText("formatBlock", "<p>")}>
+              <Type className="h-4 w-4 mr-2" />
               <span>Normal</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+        <div className="flex items-center space-x-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("insertUnorderedList")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Bullet List</TooltipContent>
+            </Tooltip>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('bold')}
-          className="h-8 w-8 p-0"
-          title="Bold"
-        >
-          <Bold className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('italic')}
-          className="h-8 w-8 p-0"
-          title="Italic"
-        >
-          <Italic className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('underline')}
-          className="h-8 w-8 p-0"
-          title="Underline"
-        >
-          <Underline className="h-4 w-4" />
-        </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("insertOrderedList")}
+                >
+                  <ListOrdered className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Numbered List</TooltipContent>
+            </Tooltip>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={insertCheckbox}
+                >
+                  <CheckSquare className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Checkbox</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('insertUnorderedList')}
-          className="h-8 w-8 p-0"
-          title="Bullet List"
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('insertOrderedList')}
-          className="h-8 w-8 p-0"
-          title="Numbered List"
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center space-x-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("justifyLeft")}
+                >
+                  <AlignLeft className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Align Left</TooltipContent>
+            </Tooltip>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("justifyCenter")}
+                >
+                  <AlignCenter className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Align Center</TooltipContent>
+            </Tooltip>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('justifyLeft')}
-          className="h-8 w-8 p-0"
-          title="Align Left"
-        >
-          <AlignLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('justifyCenter')}
-          className="h-8 w-8 p-0"
-          title="Align Center"
-        >
-          <AlignCenter className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('justifyRight')}
-          className="h-8 w-8 p-0"
-          title="Align Right"
-        >
-          <AlignRight className="h-4 w-4" />
-        </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("justifyRight")}
+                >
+                  <AlignRight className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Align Right</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+        <div className="flex items-center space-x-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={insertLink}
+                >
+                  <Link className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Insert Link</TooltipContent>
+            </Tooltip>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={insertLink}
-          className="h-8 w-8 p-0"
-          title="Insert Link"
-        >
-          <LinkIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={insertImage}
-          className="h-8 w-8 p-0"
-          title="Insert Image"
-        >
-          <ImageIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('formatBlock', '<pre>')}
-          className="h-8 w-8 p-0"
-          title="Code Block"
-        >
-          <Code className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText('formatBlock', '<blockquote>')}
-          className="h-8 w-8 p-0"
-          title="Quote"
-        >
-          <Quote className="h-4 w-4" />
-        </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={insertImage}
+                >
+                  <ImageIcon className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Insert Image</TooltipContent>
+            </Tooltip>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("formatBlock", "<blockquote>")}
+                >
+                  <Quote className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Quote</TooltipContent>
+            </Tooltip>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("undo")}
-          className="h-8 w-8 p-0"
-          title="Undo"
-        >
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("redo")}
-          className="h-8 w-8 p-0"
-          title="Redo"
-        >
-          <Redo className="h-4 w-4" />
-        </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => formatText("formatBlock", "<pre>")}
+                >
+                  <Code className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Code Block</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
-      <div 
+      <style jsx global>{`
+        .apple-notes-editor {
+          min-height: 300px;
+          padding: 16px;
+          outline: none;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            Helvetica, Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+        }
+        .apple-notes-editor:empty:before {
+          content: attr(data-placeholder);
+          color: #aaa;
+          pointer-events: none;
+        }
+        .apple-notes-editor h1 {
+          font-size: 1.8em;
+          margin-bottom: 0.5em;
+          font-weight: 600;
+        }
+        .apple-notes-editor h2 {
+          font-size: 1.5em;
+          margin-bottom: 0.5em;
+          font-weight: 600;
+        }
+        .apple-notes-editor p {
+          margin-bottom: 1em;
+        }
+        .apple-notes-editor blockquote {
+          border-left: 3px solid #ddd;
+          padding-left: 1em;
+          margin-left: 0;
+          color: #666;
+          font-style: italic;
+        }
+        .apple-notes-editor pre {
+          background-color: #f5f5f5;
+          padding: 0.5em;
+          border-radius: 4px;
+          font-family: monospace;
+          overflow-x: auto;
+        }
+        .apple-notes-editor img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 4px;
+        }
+        .apple-notes-editor a {
+          color: #0070f3;
+          text-decoration: none;
+        }
+        .apple-notes-editor a:hover {
+          text-decoration: underline;
+        }
+        .apple-notes-editor ul,
+        .apple-notes-editor ol {
+          padding-left: 2em;
+          margin-bottom: 1em;
+        }
+        .apple-notes-editor .checkbox-item {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 0.5em;
+        }
+        .apple-notes-editor .checkbox-item input[type="checkbox"] {
+          margin-right: 0.5em;
+          margin-top: 0.3em;
+        }
+      `}</style>
+
+      <div
         ref={editorRef}
-        className="min-h-[300px] p-4 focus:outline-none prose prose-sm max-w-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 empty:before:pointer-events-none"
-        contentEditable={true}
+        className="apple-notes-editor"
+        contentEditable
         onInput={handleInput}
-        onPaste={handlePaste}
+        onMouseUp={handleMouseUp}
+        onKeyUp={handleKeyUp}
         data-placeholder={placeholder}
         dangerouslySetInnerHTML={{ __html: value }}
-        dir="ltr"
-        style={{ 
-          direction: 'ltr',
-          textAlign: 'left',
-          unicodeBidi: 'bidi-override'
-        }}
       />
     </div>
   );
