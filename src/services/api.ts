@@ -2,7 +2,9 @@ import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const getToken = () => localStorage.getItem("token");
+export const getToken = () => {
+  return localStorage.getItem('accessToken');
+};
 
 const handleResponse = async (response: Response) => {
   if (!response.ok) {

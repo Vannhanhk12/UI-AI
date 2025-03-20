@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+// src/components/blogs/BlogEditor.tsx
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Card, CardContent } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Eye, Save, ArrowLeft } from "lucide-react";
+import { Eye, Save, ArrowLeft, Loader2, Image as ImageIcon, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import FileUpload from "./FileUpload";
@@ -16,18 +17,76 @@ import { createBlog } from "../../services/api";
 interface BlogEditorProps {
   onSave: (blog: any) => void;
   onCancel: () => void;
+  initialData?: any;
 }
 
-const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [coverImage, setCoverImage] = useState("");
-  const [readTime, setReadTime] = useState("5 min read");
-  const [categoryIds, setCategoryIds] = useState<string[]>([]);
-  const [isHidden, setIsHidden] = useState(false);
+const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }) => {
+  const [title, setTitle] = useState(initialData?.title || "");
+  const [content, setContent] = useState(initialData?.content || "");
+  const [excerpt, setExcerpt] = useState(initialData?.excerpt || "");
+  const [coverImage, setCoverImage] = useState(initialData?.coverImage || "");
+  const [readTime, setReadTime] = useState(initialData?.readTime || "5 min read");
+  const [categoryIds, setCategoryIds] = useState<string[]>(initialData?.categoryIds || []);
+  const [isHidden, setIsHidden] = useState(initialData?.isHidden || false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("edit");
+  const [autosaveInterval, setAutosaveInterval] = useState<NodeJS.Timeout | null>(null);
+  const [autosavedAt, setAutosavedAt] = useState<Date | null>(null);
+  const [hasDraft, setHasDraft] = useState(false);
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('blogDraft');
+    if (savedDraft && !initialData) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setTitle(draft.title || "");
+        setContent(draft.content || "");
+        setExcerpt(draft.excerpt || "");
+        setCoverImage(draft.coverImage || "");
+        setCategoryIds(draft.categoryIds || []);
+        setHasDraft(true);
+        toast.info("Draft loaded from your previous session");
+      } catch (error) {
+        console.error("Error loading draft:", error);
+      }
+    }
+
+    // Set up autosave interval
+    const interval = setInterval(() => {
+      saveDraft();
+    }, 30000); // Autosave every 30 seconds
+    setAutosaveInterval(interval);
+
+    return () => {
+      if (autosaveInterval) {
+        clearInterval(autosaveInterval);
+      }
+    };
+  }, []);
+
+  // Save draft to localStorage
+  const saveDraft = () => {
+    if (title || content || excerpt || coverImage) {
+      const draft = {
+        title,
+        content,
+        excerpt,
+        coverImage,
+        categoryIds,
+        isHidden,
+        lastSaved: new Date()
+      };
+      localStorage.setItem('blogDraft', JSON.stringify(draft));
+      setAutosavedAt(new Date());
+      setHasDraft(true);
+    }
+  };
+
+  // Clear draft
+  const clearDraft = () => {
+    localStorage.removeItem('blogDraft');
+    setHasDraft(false);
+  };
 
   const handleCoverImageUpload = (url: string) => {
     setCoverImage(url);
@@ -64,20 +123,22 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
       const blogData: CreateBlogDto = {
         title,
         content,
-        excerpt:
-          excerpt || content.replace(/<[^>]*>/g, " ").substring(0, 150) + "...",
+        excerpt: excerpt || content.replace(/<[^>]*>/g, " ").substring(0, 150) + "...",
         coverImage,
         readTime,
         categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
         isHidden,
       };
 
+      console.log("Submitting blog data:", blogData);
+
       const response = await createBlog(blogData);
       toast.success("Blog published successfully!");
+      clearDraft(); // Clear draft after successful publishing
       onSave(response);
     } catch (error) {
       console.error("Error creating blog:", error);
-      // Error is already handled in the API service
+      toast.error("Failed to create blog. Please check console for details.");
     } finally {
       setIsSubmitting(false);
     }
@@ -85,18 +146,25 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <Button variant="ghost" onClick={onCancel} className="gap-1">
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
+        
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
           <TabsList>
             <TabsTrigger value="edit">Edit</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
           </TabsList>
         </Tabs>
+        
         <div className="flex gap-2">
+          {hasDraft && autosavedAt && (
+            <span className="text-xs text-gray-500 self-center mr-2">
+              Auto-saved {new Date(autosavedAt).toLocaleTimeString()}
+            </span>
+          )}
           <Button
             variant="outline"
             onClick={() => setIsHidden(!isHidden)}
@@ -106,16 +174,19 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
             {isHidden ? "Private" : "Public"}
           </Button>
           <Button
+            onClick={saveDraft}
+            variant="outline"
+            className="gap-1"
+          >
+            Save Draft
+          </Button>
+          <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
             className="bg-blue-600 hover:bg-blue-700 gap-1"
           >
             {isSubmitting ? (
-              <motion.div
-                className="h-4 w-4 rounded-full border-2 border-white border-t-transparent"
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Save className="h-4 w-4" />
             )}
@@ -129,8 +200,8 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
           <Tabs value={activeTab} className="w-full">
             <TabsContent value="edit" className="mt-0 space-y-6">
               <div>
-                <Label htmlFor="cover-image" className="block mb-2">
-                  Cover Image
+                <Label htmlFor="cover-image" className="block mb-2 flex items-center gap-2">
+                  <ImageIcon className="h-4 w-4" /> Cover Image
                 </Label>
                 <FileUpload
                   onFileUpload={handleCoverImageUpload}
@@ -167,8 +238,8 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel }) => {
               </div>
 
               <div>
-                <Label htmlFor="categories" className="block mb-2">
-                  Categories
+                <Label htmlFor="categories" className="block mb-2 flex items-center gap-2">
+                  <Tag className="h-4 w-4" /> Categories
                 </Label>
                 <CategorySelector
                   selectedCategories={categoryIds}

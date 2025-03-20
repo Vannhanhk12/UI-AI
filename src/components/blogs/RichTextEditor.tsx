@@ -1,25 +1,19 @@
 import React, { useRef, useEffect } from "react";
-import { Button } from "../ui/button";
-import {
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-  List,
-  ListOrdered,
-  Image as ImageIcon,
-  Link,
-  Heading1,
-  Heading2,
-  Quote,
-  Code,
-  Undo,
-  Redo,
+import { 
+  Bold, Italic, Underline, List, ListOrdered, 
+  AlignLeft, AlignCenter, AlignRight, 
+  Heading1, Heading2, Heading3,
+  Link as LinkIcon, Image as ImageIcon, Code, Quote,
+  Undo, Redo
 } from "lucide-react";
+import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 interface RichTextEditorProps {
   value: string;
@@ -35,60 +29,110 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Apply placeholder styling if needed
     if (editorRef.current) {
-      editorRef.current.innerHTML = value;
+      const editor = editorRef.current;
+      
+      if (!value) {
+        editor.classList.add('empty');
+      } else {
+        editor.classList.remove('empty');
+      }
     }
-  }, []);
+  }, [value]);
 
-  const formatText = (command: string, value: string = "") => {
+  const formatText = (command: string, value?: string) => {
     document.execCommand(command, false, value);
+    
     if (editorRef.current) {
+      // Focus back on the editor
       editorRef.current.focus();
-      onChange(editorRef.current.innerHTML);
+      
+      // Get updated content
+      const updatedContent = editorRef.current.innerHTML;
+      onChange(updatedContent);
     }
   };
 
-  const handleImageUpload = () => {
-    const url = prompt("Enter image URL:");
-    if (url) {
-      document.execCommand("insertImage", false, url);
-      if (editorRef.current) {
-        onChange(editorRef.current.innerHTML);
-      }
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    const content = e.currentTarget.innerHTML;
+    onChange(content);
+    
+    // Toggle empty class for placeholder
+    if (content === '') {
+      e.currentTarget.classList.add('empty');
+    } else {
+      e.currentTarget.classList.remove('empty');
     }
   };
 
-  const handleLinkInsert = () => {
-    const url = prompt("Enter link URL:");
-    if (url) {
-      document.execCommand("createLink", false, url);
-      if (editorRef.current) {
-        onChange(editorRef.current.innerHTML);
-      }
-    }
-  };
-
-  const handleHeading = (level: number) => {
-    document.execCommand("formatBlock", false, `h${level}`);
+  const handlePaste = (e: React.ClipboardEvent) => {
+    // Prevent default to avoid pasting formatted content
+    e.preventDefault();
+    
+    // Get plain text from clipboard
+    const text = e.clipboardData.getData('text/plain');
+    
+    // Insert at cursor position
+    document.execCommand('insertText', false, text);
+    
+    // Update the content
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
     }
   };
 
-  const handleInput = () => {
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+  // Insert link
+  const insertLink = () => {
+    const url = prompt('Enter the URL');
+    if (url) {
+      formatText('createLink', url);
+    }
+  };
+
+  // Insert image
+  const insertImage = () => {
+    const url = prompt('Enter the image URL');
+    if (url) {
+      formatText('insertImage', url);
     }
   };
 
   return (
     <div className="border rounded-md overflow-hidden">
       <div className="bg-gray-50 p-2 border-b flex flex-wrap items-center gap-1">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-8">
+              Heading
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => formatText('formatBlock', 'h1')}>
+              <Heading1 className="h-4 w-4 mr-2" />
+              <span>Heading 1</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => formatText('formatBlock', 'h2')}>
+              <Heading2 className="h-4 w-4 mr-2" />
+              <span>Heading 2</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => formatText('formatBlock', 'h3')}>
+              <Heading3 className="h-4 w-4 mr-2" />
+              <span>Heading 3</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => formatText('formatBlock', 'p')}>
+              <span>Normal</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Separator orientation="vertical" className="h-6 mx-1" />
+
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => formatText("bold")}
+          onClick={() => formatText('bold')}
           className="h-8 w-8 p-0"
           title="Bold"
         >
@@ -98,7 +142,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => formatText("italic")}
+          onClick={() => formatText('italic')}
           className="h-8 w-8 p-0"
           title="Italic"
         >
@@ -108,7 +152,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => formatText("underline")}
+          onClick={() => formatText('underline')}
           className="h-8 w-8 p-0"
           title="Underline"
         >
@@ -121,73 +165,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => handleHeading(1)}
-          className="h-8 w-8 p-0"
-          title="Heading 1"
-        >
-          <Heading1 className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => handleHeading(2)}
-          className="h-8 w-8 p-0"
-          title="Heading 2"
-        >
-          <Heading2 className="h-4 w-4" />
-        </Button>
-
-        <Separator orientation="vertical" className="h-6 mx-1" />
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("justifyLeft")}
-          className="h-8 w-8 p-0"
-          title="Align Left"
-        >
-          <AlignLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("justifyCenter")}
-          className="h-8 w-8 p-0"
-          title="Align Center"
-        >
-          <AlignCenter className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("justifyRight")}
-          className="h-8 w-8 p-0"
-          title="Align Right"
-        >
-          <AlignRight className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("justifyFull")}
-          className="h-8 w-8 p-0"
-          title="Justify"
-        >
-          <AlignJustify className="h-4 w-4" />
-        </Button>
-
-        <Separator orientation="vertical" className="h-6 mx-1" />
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => formatText("insertUnorderedList")}
+          onClick={() => formatText('insertUnorderedList')}
           className="h-8 w-8 p-0"
           title="Bullet List"
         >
@@ -197,7 +175,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => formatText("insertOrderedList")}
+          onClick={() => formatText('insertOrderedList')}
           className="h-8 w-8 p-0"
           title="Numbered List"
         >
@@ -210,21 +188,31 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => formatText("formatBlock", "<blockquote>")}
+          onClick={() => formatText('justifyLeft')}
           className="h-8 w-8 p-0"
-          title="Quote"
+          title="Align Left"
         >
-          <Quote className="h-4 w-4" />
+          <AlignLeft className="h-4 w-4" />
         </Button>
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => formatText("formatBlock", "<pre>")}
+          onClick={() => formatText('justifyCenter')}
           className="h-8 w-8 p-0"
-          title="Code Block"
+          title="Align Center"
         >
-          <Code className="h-4 w-4" />
+          <AlignCenter className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => formatText('justifyRight')}
+          className="h-8 w-8 p-0"
+          title="Align Right"
+        >
+          <AlignRight className="h-4 w-4" />
         </Button>
 
         <Separator orientation="vertical" className="h-6 mx-1" />
@@ -233,7 +221,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={handleImageUpload}
+          onClick={insertLink}
+          className="h-8 w-8 p-0"
+          title="Insert Link"
+        >
+          <LinkIcon className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={insertImage}
           className="h-8 w-8 p-0"
           title="Insert Image"
         >
@@ -243,11 +241,21 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={handleLinkInsert}
+          onClick={() => formatText('formatBlock', '<pre>')}
           className="h-8 w-8 p-0"
-          title="Insert Link"
+          title="Code Block"
         >
-          <Link className="h-4 w-4" />
+          <Code className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => formatText('formatBlock', '<blockquote>')}
+          className="h-8 w-8 p-0"
+          title="Quote"
+        >
+          <Quote className="h-4 w-4" />
         </Button>
 
         <Separator orientation="vertical" className="h-6 mx-1" />
@@ -273,13 +281,21 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Redo className="h-4 w-4" />
         </Button>
       </div>
-      <div
+
+      <div 
         ref={editorRef}
-        className="min-h-[300px] p-4 focus:outline-none prose prose-sm max-w-none"
-        contentEditable
+        className="min-h-[300px] p-4 focus:outline-none prose prose-sm max-w-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 empty:before:pointer-events-none"
+        contentEditable={true}
         onInput={handleInput}
-        placeholder={placeholder}
+        onPaste={handlePaste}
+        data-placeholder={placeholder}
         dangerouslySetInnerHTML={{ __html: value }}
+        dir="ltr"
+        style={{ 
+          direction: 'ltr',
+          textAlign: 'left',
+          unicodeBidi: 'bidi-override'
+        }}
       />
     </div>
   );
