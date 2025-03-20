@@ -1,4 +1,3 @@
-// src/App.tsx
 import { Suspense, lazy } from "react";
 import { useRoutes, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";

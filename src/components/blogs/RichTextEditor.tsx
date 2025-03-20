@@ -57,6 +57,32 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   }, []);
 
+  // Set direction to LTR on mount
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.style.direction = 'ltr';
+      editorRef.current.style.textAlign = 'left';
+    }
+  }, []);
+
+  // Force LTR mode on editor focus
+  useEffect(() => {
+    const handleFocus = () => {
+      if (editorRef.current) {
+        editorRef.current.style.direction = 'ltr';
+        editorRef.current.style.textAlign = 'left';
+      }
+    };
+
+    const editor = editorRef.current;
+    if (editor) {
+      editor.addEventListener('focus', handleFocus);
+      return () => {
+        editor.removeEventListener('focus', handleFocus);
+      };
+    }
+  }, []);
+
   // Save selection when user selects text
   const saveSelection = () => {
     const sel = window.getSelection();
@@ -91,6 +117,22 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const handleInput = () => {
     updateContent();
+    if (editorRef.current) {
+      editorRef.current.style.direction = 'ltr';
+      editorRef.current.style.textAlign = 'left';
+    }
+  };
+
+  // Custom paste handler to correctly handle pasted text with unicode characters
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
+    updateContent();
+    if (editorRef.current) {
+      editorRef.current.style.direction = 'ltr';
+      editorRef.current.style.textAlign = 'left';
+    }
   };
 
   const handleSelectionChange = () => {
@@ -108,7 +150,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   const handleKeyUp = (e: React.KeyboardEvent) => {
-    // Don't hide toolbar on arrow keys, shift, ctrl, etc.
     if (
       ![
         "ArrowUp",
@@ -465,7 +506,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </div>
       </div>
 
-      <style jsx global>{`
+      <style>{`
+        .apple-notes-editor, .apple-notes-editor * {
+          direction: ltr !important;
+          text-align: left !important;
+          unicode-bidi: embed;
+        }
         .apple-notes-editor {
           min-height: 300px;
           padding: 16px;
@@ -533,6 +579,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           margin-right: 0.5em;
           margin-top: 0.3em;
         }
+        /* Additional fixes for diacritical characters */
+        .apple-notes-editor * {
+          text-rendering: optimizeLegibility;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
       `}</style>
 
       <div
@@ -542,8 +594,16 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onInput={handleInput}
         onMouseUp={handleMouseUp}
         onKeyUp={handleKeyUp}
+        onPaste={handlePaste}
         data-placeholder={placeholder}
         dangerouslySetInnerHTML={{ __html: value }}
+        dir="ltr"
+        lang="vi"
+        style={{
+          direction: 'ltr',
+          unicodeBidi: 'embed',
+          textAlign: 'left'
+        }}
       />
     </div>
   );
