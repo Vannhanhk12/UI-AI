@@ -1,39 +1,29 @@
 import React from "react";
 import { CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-type TaskStatus = "completed" | "in-progress" | "pending";
-type TaskPriority = "high" | "medium" | "low";
-
-interface Task {
-  id: number;
-  title: string;
-  status: TaskStatus;
-  dueDate: string;
-  priority: TaskPriority;
-}
+import { Task } from "@/services/taskService";
 
 interface TaskListProps {
   tasks: Task[];
 }
 
 const TaskList = ({ tasks = [] }: TaskListProps) => {
-  const getStatusIcon = (status: TaskStatus) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
-      case "completed":
+      case "COMPLETED":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "in-progress":
+      case "IN_PROGRESS":
         return <Clock className="h-5 w-5 text-amber-500" />;
-      case "pending":
+      case "NOT_STARTED":
         return <AlertCircle className="h-5 w-5 text-gray-400" />;
       default:
         return null;
     }
   };
 
-  const getPriorityBadge = (priority: TaskPriority) => {
+  const getPriorityBadge = (priority: string) => {
     switch (priority) {
-      case "high":
+      case "HIGH":
         return (
           <Badge
             variant="destructive"
@@ -42,7 +32,7 @@ const TaskList = ({ tasks = [] }: TaskListProps) => {
             High
           </Badge>
         );
-      case "medium":
+      case "MEDIUM":
         return (
           <Badge
             variant="outline"
@@ -51,7 +41,7 @@ const TaskList = ({ tasks = [] }: TaskListProps) => {
             Medium
           </Badge>
         );
-      case "low":
+      case "LOW":
         return (
           <Badge
             variant="outline"
@@ -92,12 +82,12 @@ const TaskList = ({ tasks = [] }: TaskListProps) => {
             <div className="flex-shrink-0">{getStatusIcon(task.status)}</div>
             <div>
               <h3
-                className={`font-medium ${task.status === "completed" ? "line-through text-gray-500" : "text-gray-900"}`}
+                className={`font-medium ${task.status === "COMPLETED" ? "line-through text-gray-500" : "text-gray-900"}`}
               >
                 {task.title}
               </h3>
               <p className="text-sm text-gray-500">
-                Due {formatDate(task.dueDate)}
+                Due {formatDate(task.deadline)}
               </p>
             </div>
           </div>

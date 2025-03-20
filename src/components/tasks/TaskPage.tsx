@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiPlus,
@@ -17,16 +18,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-interface Task {
-  id: number;
-  title: string;
-  priority: "high" | "medium" | "low";
-  completed: boolean;
-  dueDate: string;
-  timeEstimate?: number; // in minutes
-  completedAt?: string;
-}
+import {
+  Task,
+  fetchTasks,
+  startTask,
+  completeTask,
+} from "@/services/taskService";
+import { toast } from "sonner";
+import TaskItem from "./TaskItem";
 
 const motivationalSlogans = [
   "Hãy biến mỗi nhiệm vụ thành một bước tiến đến thành công!",
@@ -42,40 +41,29 @@ const motivationalSlogans = [
 ];
 
 const TasksPage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: "Hoàn thành báo cáo dự án",
-      priority: "high",
-      completed: false,
-      dueDate: "Hôm nay",
-      timeEstimate: 120,
-    },
-    {
-      id: 2,
-      title: "Chuẩn bị tài liệu cuộc họp",
-      priority: "medium",
-      completed: false,
-      dueDate: "Hôm nay",
-      timeEstimate: 45,
-    },
-    {
-      id: 3,
-      title: "Nghiên cứu về xu hướng thị trường",
-      priority: "low",
-      completed: false,
-      dueDate: "Ngày mai",
-      timeEstimate: 60,
-    },
-    {
-      id: 4,
-      title: "Cập nhật thông tin khách hàng",
-      priority: "medium",
-      completed: false,
-      dueDate: "21/03",
-      timeEstimate: 30,
-    },
-  ]);
+  const navigate = useNavigate();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Load tasks from API
+  const loadTasks = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchTasks(page, 10);
+      setTasks(response.tasks);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("Error loading tasks:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTasks();
+  }, [page]);
 
   const [timer, setTimer] = useState<{
     active: boolean;
@@ -149,38 +137,55 @@ const TasksPage: React.FC = () => {
     setChartData(data);
   };
 
-  const toggleCompletion = (id: number) => {
-    setTasks(
-      tasks.map((task) => {
-        if (task.id === id) {
-          const completed = !task.completed;
-          return {
-            ...task,
-            completed,
-            completedAt: completed ? new Date().toISOString() : undefined,
-          };
-        }
-        return task;
-      }),
-    );
+  const handleCompleteTask = async (id: string) => {
+    try {
+      const updatedTask = await completeTask(id);
 
-    // Update chart data when a task is completed
-    if (tasks.find((t) => t.id === id)?.completed === false) {
+      // Update local state
+      setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+
+      // Update chart data
       const newChartData = [...chartData];
       const today = new Date().getDay();
       const dayIndex = today === 0 ? 6 : today - 1; // Adjust for Sunday
       newChartData[dayIndex].completed += 1;
-      if (tasks.find((t) => t.id === id)?.priority === "high") {
+
+      if (updatedTask.priority === "HIGH") {
         newChartData[dayIndex].important += 1;
       }
+
       setChartData(newChartData);
+      toast.success("Task completed successfully!");
+    } catch (error) {
+      console.error("Error completing task:", error);
+      toast.error("Failed to complete task");
+    }
+  };
+
+  const handleStartTask = async (id: string) => {
+    try {
+      const updatedTask = await startTask(id);
+
+      // Update local state
+      setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+      toast.success("Task started successfully!");
+
+      // If the task has an estimated duration, start the timer
+      if (updatedTask.estimatedDuration) {
+        startTimer(updatedTask);
+      }
+    } catch (error) {
+      console.error("Error starting task:", error);
+      toast.error("Failed to start task");
     }
   };
 
   const startTimer = (task: Task) => {
     if (timer.active) return;
 
-    const timeInSeconds = task.timeEstimate ? task.timeEstimate * 60 : 25 * 60; // default to 25 minutes if no estimate
+    const timeInSeconds = task.estimatedDuration
+      ? task.estimatedDuration * 60
+      : 25 * 60; // default to 25 minutes if no estimate
 
     setTimer({
       active: true,
@@ -339,85 +344,69 @@ const TasksPage: React.FC = () => {
         <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-800">Nhiệm vụ</h2>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center transition-colors">
+            <button
+              onClick={() => navigate("/tasks/new")}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center transition-colors"
+            >
               <FiPlus className="mr-2" /> Thêm nhiệm vụ
             </button>
           </div>
 
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <motion.div
-                key={task.id}
-                className={`flex items-center p-4 border ${task.priority === "high" ? "border-red-100" : task.priority === "medium" ? "border-yellow-100" : "border-green-100"} rounded-lg hover:bg-gray-50 transition-colors ${task.completed ? "bg-gray-50" : ""}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{
-                  scale: 1.01,
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
-                }}
-              >
-                <div
-                  className={`w-4 h-4 rounded-full mr-3 ${
-                    task.priority === "high"
-                      ? "bg-red-500"
-                      : task.priority === "medium"
-                        ? "bg-yellow-500"
-                        : "bg-green-500"
-                  }`}
-                ></div>
-                <div className="flex-1">
-                  <p
-                    className={`${task.completed ? "line-through text-gray-400" : "text-gray-800"} font-medium`}
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <p>No tasks found. Create your first task to get started!</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {tasks.map((task) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{
+                    scale: 1.01,
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
+                  }}
+                >
+                  <TaskItem
+                    task={task}
+                    onToggle={handleCompleteTask}
+                    onStart={handleStartTask}
+                  />
+                </motion.div>
+              ))}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-6 space-x-2">
+                  <button
+                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={page === 1}
+                    className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
                   >
-                    {task.title}
-                  </p>
-                  {task.completed && task.completedAt && (
-                    <p className="text-xs text-gray-400">
-                      Hoàn thành:{" "}
-                      {new Date(task.completedAt).toLocaleTimeString("vi-VN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  )}
+                    Previous
+                  </button>
+                  <span className="px-3 py-1">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={page === totalPages}
+                    className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
                 </div>
-
-                <div className="mr-4 text-sm text-gray-500 flex items-center">
-                  <FiCalendar className="mr-1" />
-                  {task.dueDate}
-                </div>
-
-                {task.timeEstimate && !task.completed && (
-                  <div className="mr-4">
-                    <button
-                      className={`flex items-center py-1 px-3 rounded-full text-xs font-medium ${
-                        timer.taskId === task.id
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-100 text-gray-700 hover:bg-blue-50"
-                      } transition-colors`}
-                      onClick={() => startTimer(task)}
-                      disabled={timer.active && timer.taskId !== task.id}
-                    >
-                      <FiClock className="mr-1" />
-                      {task.timeEstimate} phút
-                    </button>
-                  </div>
-                )}
-
-                <div className="flex items-center">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => toggleCompletion(task.id)}
-                      className="form-checkbox h-5 w-5 text-blue-500 rounded border-gray-300 focus:ring-blue-500"
-                    />
-                  </label>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-sm">

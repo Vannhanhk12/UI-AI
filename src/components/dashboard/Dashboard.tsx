@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Task } from "@/services/taskService";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -43,71 +44,100 @@ interface Task {
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  // Mock data - in a real app, this would come from your backend
-  const stats = {
-    completedTasks: 24,
-    pendingTasks: 7,
+  const [stats, setStats] = useState({
+    completedTasks: 0,
+    pendingTasks: 0,
     productivity: 78,
     currentStreak: 5,
     longestStreak: 12,
-    focusTime: "4.5 giờ",
+    focusTime: "0 giờ",
     weeklyGoal: 68,
-  };
+  });
 
-  // Task type is now imported from TaskList component
+  const [recentTasks, setRecentTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const recentTasks: Task[] = [
-    {
-      id: 1,
-      title: "Complete project proposal",
-      status: "completed",
-      dueDate: "2023-06-10",
-      priority: "high",
-    },
-    {
-      id: 2,
-      title: "Review marketing materials",
-      status: "in-progress",
-      dueDate: "2023-06-12",
-      priority: "medium",
-    },
-    {
-      id: 3,
-      title: "Schedule team meeting",
-      status: "pending",
-      dueDate: "2023-06-15",
-      priority: "low",
-    },
-    {
-      id: 4,
-      title: "Update documentation",
-      status: "in-progress",
-      dueDate: "2023-06-11",
-      priority: "high",
-    },
-  ];
+  // Fetch tasks from API
+  useEffect(() => {
+    const fetchTasksData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/tasks?limit=4`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          },
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setRecentTasks(data.tasks);
+
+          // Calculate stats
+          const completed = data.tasks.filter(
+            (task: Task) => task.status === "COMPLETED",
+          ).length;
+          const inProgress = data.tasks.filter(
+            (task: Task) => task.status === "IN_PROGRESS",
+          ).length;
+          const notStarted = data.tasks.filter(
+            (task: Task) => task.status === "NOT_STARTED",
+          ).length;
+
+          // Calculate total focus time from completed tasks (in hours)
+          const totalMinutes = data.tasks
+            .filter((task: Task) => task.status === "COMPLETED")
+            .reduce(
+              (acc: number, task: Task) => acc + (task.estimatedDuration || 0),
+              0,
+            );
+
+          const focusHours = (totalMinutes / 60).toFixed(1);
+
+          setStats({
+            ...stats,
+            completedTasks: completed,
+            pendingTasks: notStarted + inProgress,
+            focusTime: `${focusHours} giờ`,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTasksData();
+  }, []);
 
   // Task pie chart data
   const taskPieData = [
-    { name: 'Completed', value: 65, color: '#10B981' },
-    { name: 'In Progress', value: 25, color: '#3B82F6' },
-    { name: 'Pending', value: 10, color: '#F59E0B' },
+    { name: "Completed", value: 65, color: "#10B981" },
+    { name: "In Progress", value: 25, color: "#3B82F6" },
+    { name: "Pending", value: 10, color: "#F59E0B" },
   ];
 
   // Recent activities data
   const recentActivities = [
-    { activity: 'Hoàn thành Task "Phân tích dữ liệu"', time: '2 giờ trước', icon: 'check' },
-    { activity: 'Đã thêm task mới', time: '3 giờ trước', icon: 'plus' },
-    { activity: 'Chỉnh sửa mục tiêu tuần', time: '5 giờ trước', icon: 'edit' },
-    { activity: 'Đạt 95% hiệu suất', time: 'Hôm qua', icon: 'chart' },
+    {
+      activity: 'Hoàn thành Task "Phân tích dữ liệu"',
+      time: "2 giờ trước",
+      icon: "check",
+    },
+    { activity: "Đã thêm task mới", time: "3 giờ trước", icon: "plus" },
+    { activity: "Chỉnh sửa mục tiêu tuần", time: "5 giờ trước", icon: "edit" },
+    { activity: "Đạt 95% hiệu suất", time: "Hôm qua", icon: "chart" },
   ];
 
   // Daily habits data
   const dailyHabits = [
-    { habit: 'Đọc sách', streak: 5, target: 30, progress: 65 },
-    { habit: 'Tập thể dục', streak: 12, target: 30, progress: 85 },
-    { habit: 'Học ngoại ngữ', streak: 3, target: 30, progress: 45 },
-    { habit: 'Thiền', streak: 8, target: 30, progress: 72 },
+    { habit: "Đọc sách", streak: 5, target: 30, progress: 65 },
+    { habit: "Tập thể dục", streak: 12, target: 30, progress: 85 },
+    { habit: "Học ngoại ngữ", streak: 3, target: 30, progress: 45 },
+    { habit: "Thiền", streak: 8, target: 30, progress: 72 },
   ];
 
   const handleCreateTask = () => {
@@ -133,7 +163,12 @@ const Dashboard = () => {
               >
                 <span className="text-sm text-gray-500">Today: </span>
                 <span className="ml-2 font-medium">
-                  {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  {new Date().toLocaleDateString("vi-VN", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
                 </span>
               </motion.div>
               <Button
@@ -228,9 +263,7 @@ const Dashboard = () => {
                     <Clock className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">
-                      {stats.focusTime}
-                    </div>
+                    <div className="text-3xl font-bold">{stats.focusTime}</div>
                     <p className="text-xs text-blue-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       +30 phút
