@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +40,7 @@ const LoginForm = ({
   isLoading: externalLoading = false,
 }: LoginFormProps) => {
   const { login } = useAuth();
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,9 +128,11 @@ const LoginForm = ({
     >
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold tracking-tight">Welcome back</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            {t("welcomeBack")}
+          </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            Enter your credentials to sign in to your account
+            {t("enterCredentials")}
           </p>
         </div>
 
@@ -139,7 +143,7 @@ const LoginForm = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("email")}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="name@example.com"
@@ -159,7 +163,7 @@ const LoginForm = ({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t("password")}</FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
@@ -195,7 +199,7 @@ const LoginForm = ({
                       className="px-0 font-normal"
                       disabled={isLoading}
                     >
-                      Forgot password?
+                      {t("forgotPassword")}
                     </Button>
                   </div>
                 </FormItem>
@@ -206,10 +210,10 @@ const LoginForm = ({
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {t("signingIn")}
                 </>
               ) : (
-                "Sign in"
+                t("signIn")
               )}
             </Button>
           </form>
@@ -221,7 +225,7 @@ const LoginForm = ({
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-white px-2 text-muted-foreground">
-              Or continue with
+              {t("orContinueWith")}
             </span>
           </div>
         </div>
@@ -262,23 +266,23 @@ const LoginForm = ({
             {googleLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Connecting...
+                {t("connecting")}
               </>
             ) : (
-              "Sign in with Google"
+              t("signInWithGoogle")
             )}
           </Button>
         </div>
 
         <div className="text-center text-sm">
-          Don't have an account?{" "}
+          {t("dontHaveAccount")}{" "}
           <Button
             variant="link"
             className="px-0 font-normal"
             onClick={onToggleForm}
             disabled={isLoading}
           >
-            Sign up
+            {t("signUp")}
           </Button>
         </div>
       </div>

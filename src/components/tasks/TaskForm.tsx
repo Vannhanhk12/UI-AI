@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { createTask } from "@/services/taskService";
@@ -25,6 +26,7 @@ import { CalendarIcon } from "lucide-react";
 
 const TaskForm: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<{
     title: string;
@@ -62,7 +64,7 @@ const TaskForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+
     try {
       const formattedData = {
         ...formData,
@@ -71,11 +73,11 @@ const TaskForm: React.FC = () => {
         difficulty: formData.difficulty,
         priority: formData.priority,
       };
-  
+
       console.log("Sending task data:", formattedData);
       const result = await createTask(formattedData);
       console.log("API response:", result);
-      
+
       toast.success("Task created successfully!");
       navigate("/tasks");
     } catch (error) {
@@ -94,16 +96,18 @@ const TaskForm: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Create New Task</h1>
+          <h1 className="text-3xl font-bold text-gray-800">
+            {t("createNewTask")}
+          </h1>
           <Button variant="outline" onClick={() => navigate("/tasks")}>
-            Cancel
+            {t("cancel")}
           </Button>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Task Title</Label>
+              <Label htmlFor="title">{t("taskTitle")}</Label>
               <Input
                 id="title"
                 name="title"
@@ -115,7 +119,7 @@ const TaskForm: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t("description")}</Label>
               <Textarea
                 id="description"
                 name="description"
@@ -129,7 +133,7 @@ const TaskForm: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="deadline">Deadline</Label>
+                <Label htmlFor="deadline">{t("deadline")}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -157,7 +161,7 @@ const TaskForm: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="estimatedDuration">
-                  Estimated Duration (minutes)
+                  {t("estimatedDuration")}
                 </Label>
                 <Input
                   id="estimatedDuration"
@@ -173,7 +177,7 @@ const TaskForm: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="difficulty">Difficulty</Label>
+                <Label htmlFor="difficulty">{t("difficulty")}</Label>
                 <Select
                   value={formData.difficulty}
                   onValueChange={(value) =>
@@ -184,15 +188,15 @@ const TaskForm: React.FC = () => {
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="EASY">Easy</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HARD">Hard</SelectItem>
+                    <SelectItem value="EASY">{t("easy")}</SelectItem>
+                    <SelectItem value="MEDIUM">{t("medium")}</SelectItem>
+                    <SelectItem value="HARD">{t("hard")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="priority">Priority</Label>
+                <Label htmlFor="priority">{t("priority")}</Label>
                 <Select
                   value={formData.priority}
                   onValueChange={(value) =>
@@ -203,9 +207,9 @@ const TaskForm: React.FC = () => {
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="LOW">Low</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HIGH">High</SelectItem>
+                    <SelectItem value="LOW">{t("low")}</SelectItem>
+                    <SelectItem value="MEDIUM">{t("medium")}</SelectItem>
+                    <SelectItem value="HIGH">{t("high")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -217,7 +221,7 @@ const TaskForm: React.FC = () => {
                 className="w-full md:w-auto"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creating..." : "Create Task"}
+                {isSubmitting ? t("creating") : t("createTask")}
               </Button>
             </div>
           </form>

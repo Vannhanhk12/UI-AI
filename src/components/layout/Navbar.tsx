@@ -10,11 +10,13 @@ import {
   Menu,
   X,
   Bot,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,20 +31,27 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, accessToken, logout } = useAuth();
+  const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [profileData, setProfileData] = useState<{id: string; email: string} | null>(null);
+  const [profileData, setProfileData] = useState<{
+    id: string;
+    email: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       if (!accessToken) return;
-      
+
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/profile`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
-        
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+
         if (response.ok) {
           const data = await response.json();
           setProfileData(data);
@@ -51,16 +60,16 @@ const Navbar = () => {
         console.error("Failed to fetch profile data:", error);
       }
     };
-    
+
     fetchProfile();
   }, [accessToken]);
 
   const navItems = [
-    { name: "Dashboard", path: "/dashboard", icon: <Home size={18} /> },
-    { name: "Tasks", path: "/tasks", icon: <FileText size={18} /> },
-    { name: "AI Assistant", path: "/ai-chat", icon: <Bot size={18} /> },
-    { name: "Profile", path: "/profile", icon: <User size={18} /> },
-    { name: "About Nyan", path: "/about", icon: <Code size={18} /> },
+    { name: t("dashboard"), path: "/dashboard", icon: <Home size={18} /> },
+    { name: t("tasks"), path: "/tasks", icon: <FileText size={18} /> },
+    { name: t("aiAssistant"), path: "/ai-chat", icon: <Bot size={18} /> },
+    { name: t("profile"), path: "/profile", icon: <User size={18} /> },
+    { name: t("about"), path: "/about", icon: <Code size={18} /> },
   ];
 
   const isActive = (path: string) => {
@@ -70,26 +79,29 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       if (accessToken) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/logout`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           },
-        });
-        
+        );
+
         if (response.status === 204) {
           // Successful logout
           logout(); // Clear local storage and state
-          toast.success("Logged out successfully");
+          toast.success(t("logoutSuccess"));
           navigate("/"); // Redirect to landing page
         } else {
-          throw new Error("Logout failed");
+          throw new Error(t("logoutFailed"));
         }
       }
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Failed to logout. Please try again.");
-      
+      toast.error(t("logoutError"));
+
       // If server is unavailable, still perform local logout
       logout();
       navigate("/");
@@ -137,7 +149,8 @@ const Navbar = () => {
         </nav>
 
         {/* User Profile & Logout */}
-        <div className="hidden md:flex items-center ml-4">
+        <div className="hidden md:flex items-center ml-4 space-x-2">
+          <LanguageSwitcher />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2">
@@ -147,22 +160,25 @@ const Navbar = () => {
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm font-medium max-w-[150px] truncate">
-                  {profileData?.email || user?.username || "User"}
+                  {profileData?.email || user?.username || t("user")}
                 </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("myAccount")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/profile" className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <span>{t("profile")}</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-600 cursor-pointer"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Logout</span>
+                <span>{t("logout")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -204,11 +220,14 @@ const Navbar = () => {
               </Avatar>
               <div className="flex-1">
                 <p className="text-sm font-medium truncate">
-                  {profileData?.email || user?.username || "User"}
+                  {profileData?.email || user?.username || t("user")}
                 </p>
               </div>
             </div>
-            
+            <div className="py-2 mb-2 border-b border-gray-100">
+              <LanguageSwitcher />
+            </div>
+
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -226,7 +245,7 @@ const Navbar = () => {
                 </Button>
               </Link>
             ))}
-            
+
             {/* Logout Button in Mobile Menu */}
             <Button
               variant="ghost"
@@ -235,7 +254,7 @@ const Navbar = () => {
             >
               <div className="flex items-center gap-2">
                 <LogOut size={18} />
-                Logout
+                {t("logout")}
               </div>
             </Button>
           </div>

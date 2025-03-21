@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ const SignupForm = ({
   onSwitch = () => {},
 }: SignupFormProps) => {
   const { login } = useAuth();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -73,11 +75,11 @@ const SignupForm = ({
 
     try {
       const apiUrl = `${import.meta.env.VITE_API_URL}/auth/register`;
-      
+
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: formData.email,
@@ -88,29 +90,37 @@ const SignupForm = ({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(data.message || "Registration failed");
       }
 
       // Successfully registered
       const { accessToken, refreshToken, user } = data;
-      
+
       // Save tokens and user info via the auth context
       login(accessToken, refreshToken, user);
-      
+
       toast.success("Registration successful!");
       onSuccess();
     } catch (error) {
-      console.error('Registration error:', error);
-      
+      console.error("Registration error:", error);
+
       // Handle specific error cases
       if (error instanceof Error) {
-        if (error.message.includes('email') || error.message.toLowerCase().includes('already exists')) {
-          setErrors(prev => ({ ...prev, email: 'This email is already registered' }));
+        if (
+          error.message.includes("email") ||
+          error.message.toLowerCase().includes("already exists")
+        ) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "This email is already registered",
+          }));
         } else {
-          toast.error(error.message || 'Registration failed. Please try again.');
+          toast.error(
+            error.message || "Registration failed. Please try again.",
+          );
         }
       } else {
-        toast.error('Registration failed. Please try again.');
+        toast.error("Registration failed. Please try again.");
       }
     } finally {
       setIsLoading(false);
@@ -135,13 +145,15 @@ const SignupForm = ({
       className="w-full bg-white p-6 rounded-lg shadow-lg"
     >
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Create an account</h2>
-        <p className="text-gray-600 mt-1">Join us today and get started</p>
+        <h2 className="text-2xl font-bold text-gray-800">
+          {t("createAccount")}
+        </h2>
+        <p className="text-gray-600 mt-1">{t("joinToday")}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("email")}</Label>
           <div className="relative">
             <Input
               id="email"
@@ -166,7 +178,7 @@ const SignupForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("password")}</Label>
           <div className="relative">
             <Input
               id="password"
@@ -198,7 +210,7 @@ const SignupForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
           <div className="relative">
             <Input
               id="confirmPassword"
@@ -256,10 +268,10 @@ const SignupForm = ({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              <span>Creating account...</span>
+              <span>{t("creatingAccount")}</span>
             </div>
           ) : (
-            "Sign Up"
+            t("signUp")
           )}
         </Button>
       </form>
@@ -270,7 +282,9 @@ const SignupForm = ({
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            <span className="px-2 bg-white text-gray-500">
+              Or continue with
+            </span>
           </div>
         </div>
 
@@ -317,13 +331,13 @@ const SignupForm = ({
 
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
-          Already have an account?{" "}
+          {t("dontHaveAccount")}{" "}
           <button
             type="button"
             onClick={onSwitch}
             className="text-blue-600 hover:text-blue-800 font-medium"
           >
-            Sign in
+            {t("signIn")}
           </button>
         </p>
       </div>

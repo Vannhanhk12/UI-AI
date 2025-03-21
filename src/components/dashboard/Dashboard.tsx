@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Task } from "@/services/taskService";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +44,7 @@ interface Task {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [stats, setStats] = useState({
     completedTasks: 0,
@@ -153,7 +155,9 @@ const Dashboard = () => {
       <header className="bg-white shadow-sm mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {t("dashboard")}
+            </h1>
             <div className="flex justify-between items-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -176,7 +180,7 @@ const Dashboard = () => {
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 ml-4"
               >
                 <PlusCircle size={16} />
-                Create New Task
+                {t("createNewTask")}
               </Button>
             </div>
           </div>
@@ -195,7 +199,7 @@ const Dashboard = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Completed Tasks
+                  {t("completedTasks")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -209,7 +213,7 @@ const Dashboard = () => {
                     </div>
                     <p className="text-xs text-green-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      12% from last week
+                      12% {t("fromLastWeek")}
                     </p>
                   </div>
                 </div>
@@ -225,7 +229,7 @@ const Dashboard = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Pending Tasks
+                  {t("pendingTasks")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -238,7 +242,7 @@ const Dashboard = () => {
                       {stats.pendingTasks}
                     </div>
                     <p className="text-xs text-amber-600 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-1" />3 due today
+                      <ArrowUpRight className="h-3 w-3 mr-1" />3 {t("dueToday")}
                     </p>
                   </div>
                 </div>
@@ -254,7 +258,7 @@ const Dashboard = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Thời gian tập trung
+                  {t("focusTime")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -282,7 +286,7 @@ const Dashboard = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Mục tiêu tuần
+                  {t("weeklyGoal")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -320,18 +324,16 @@ const Dashboard = () => {
             <Card className="border-none shadow-md h-full">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>Recent Tasks</CardTitle>
+                  <CardTitle>{t("recentTasks")}</CardTitle>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    View All
+                    {t("viewAll")}
                   </Button>
                 </div>
-                <CardDescription>
-                  Your most recent tasks and their status
-                </CardDescription>
+                <CardDescription>{t("yourRecentTasks")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <TaskList tasks={recentTasks} />
@@ -343,7 +345,7 @@ const Dashboard = () => {
                   className="w-full sm:w-auto flex items-center gap-2"
                 >
                   <PlusCircle size={16} />
-                  Add New Task
+                  {t("addNewTask")}
                 </Button>
               </CardFooter>
             </Card>
@@ -389,10 +391,8 @@ const Dashboard = () => {
         >
           <Card className="border-none shadow-md">
             <CardHeader>
-              <CardTitle>Activity Streak</CardTitle>
-              <CardDescription>
-                Your daily task completion record
-              </CardDescription>
+              <CardTitle>{t("activityStreak")}</CardTitle>
+              <CardDescription>{t("dailyTaskCompletion")}</CardDescription>
             </CardHeader>
             <CardContent>
               <StreakCalendar />
@@ -401,15 +401,15 @@ const Dashboard = () => {
               <div className="w-full flex justify-between text-sm text-gray-500">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-sm bg-green-200"></div>
-                  <span>1-3 tasks</span>
+                  <span>{t("tasks13")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-sm bg-green-400"></div>
-                  <span>4-6 tasks</span>
+                  <span>{t("tasks46")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-sm bg-green-600"></div>
-                  <span>7+ tasks</span>
+                  <span>{t("tasks7plus")}</span>
                 </div>
               </div>
             </CardFooter>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import { PlusCircle, Search, Loader2 } from "lucide-react";
@@ -11,6 +12,7 @@ import { fetchBlogs, likeBlog, addComment } from "../../services/api";
 import { Blog, BlogsResponse } from "../../types/blog";
 
 const BlogsPage = () => {
+  const { t } = useTranslation();
   const [view, setView] = useState<"list" | "create" | "detail">("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
@@ -123,19 +125,19 @@ const BlogsPage = () => {
   return (
     <div className="container mx-auto py-6 max-w-7xl">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Blogs</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t("blogs")}</h1>
         {view === "list" && (
           <Button
             onClick={() => setView("create")}
             className="bg-blue-600 hover:bg-blue-700"
           >
             <PlusCircle className="mr-2 h-4 w-4" />
-            Create Blog
+            {t("createBlog")}
           </Button>
         )}
         {view !== "list" && (
           <Button onClick={() => setView("list")} variant="outline">
-            Back to Blogs
+            {t("viewAll")} {t("blogs")}
           </Button>
         )}
       </div>
@@ -145,7 +147,7 @@ const BlogsPage = () => {
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder="Search blogs..."
+              placeholder={t("searchBlogs")}
               className="pl-10 bg-white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -154,9 +156,9 @@ const BlogsPage = () => {
 
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="mb-6">
-              <TabsTrigger value="all">All Blogs</TabsTrigger>
-              <TabsTrigger value="popular">Popular</TabsTrigger>
-              <TabsTrigger value="recent">Recent</TabsTrigger>
+              <TabsTrigger value="all">{t("allBlogs")}</TabsTrigger>
+              <TabsTrigger value="popular">{t("popular")}</TabsTrigger>
+              <TabsTrigger value="recent">{t("recent")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all">
