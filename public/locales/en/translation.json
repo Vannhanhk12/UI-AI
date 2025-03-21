@@ -10,7 +10,7 @@
   "logoutSuccess": "Logged out successfully",
   "logoutFailed": "Logout failed",
   "logoutError": "Failed to logout. Please try again.",
-  
+  "test": "Test",
   "completedTasks": "Completed Tasks",
   "pendingTasks": "Pending Tasks",
   "focusTime": "Focus Time",
