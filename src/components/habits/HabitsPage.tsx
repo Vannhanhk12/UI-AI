@@ -35,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface Habit {
   id: number;
@@ -58,6 +59,7 @@ interface HabitCompletion {
 const HabitsPage = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [timeRange, setTimeRange] = useState("week");
+  const { t } = useTranslation();
 
   // Mock data
   const habits: Habit[] = [
@@ -226,28 +228,28 @@ const HabitsPage = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Habits Tracker</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("habitsTracker")}</h1>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select time range" />
+                  <SelectValue placeholder={t("selectTimeRange")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="quarter">This Quarter</SelectItem>
-                  <SelectItem value="year">This Year</SelectItem>
+                  <SelectItem value="week">{t("thisWeek")}</SelectItem>
+                  <SelectItem value="month">{t("thisMonth")}</SelectItem>
+                  <SelectItem value="quarter">{t("thisQuarter")}</SelectItem>
+                  <SelectItem value="year">{t("thisYear")}</SelectItem>
                 </SelectContent>
               </Select>
               <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
                 <Plus size={16} />
-                Add Habit
+                {t("addHabit")}
               </Button>
             </div>
           </div>
         </div>
       </header>
-
+  
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats cards */}
@@ -260,7 +262,7 @@ const HabitsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Total Habits
+                  {t("totalHabits")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -272,14 +274,14 @@ const HabitsPage = () => {
                     <div className="text-3xl font-bold">{totalHabits}</div>
                     <p className="text-xs text-blue-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      {dailyHabits} daily, {weeklyHabits} weekly
+                      {dailyHabits} {t("daily")}, {weeklyHabits} {t("weekly")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -288,7 +290,7 @@ const HabitsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Completion Rate
+                  {t("completionRate")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -303,7 +305,7 @@ const HabitsPage = () => {
                       </div>
                       <span className="text-xs text-green-600 flex items-center">
                         <ArrowUpRight className="h-3 w-3 mr-1" />
-                        5% from last week
+                        5% {t("fromLastWeek")}
                       </span>
                     </div>
                     <Progress value={averageCompletionRate} className="h-2" />
@@ -312,7 +314,7 @@ const HabitsPage = () => {
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -321,7 +323,7 @@ const HabitsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Longest Streak
+                  {t("longestStreak")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -331,7 +333,7 @@ const HabitsPage = () => {
                   </div>
                   <div>
                     <div className="text-3xl font-bold">
-                      {Math.max(...habits.map((h) => h.streak))} days
+                      {Math.max(...habits.map((h) => h.streak))} {t("days")}
                     </div>
                     <p className="text-xs text-orange-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
@@ -342,7 +344,7 @@ const HabitsPage = () => {
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -351,7 +353,7 @@ const HabitsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Top Category
+                  {t("topCategory")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -362,8 +364,7 @@ const HabitsPage = () => {
                   <div>
                     <div className="text-3xl font-bold">Health</div>
                     <p className="text-xs text-purple-600 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-1" />2 habits in this
-                      category
+                      <ArrowUpRight className="h-3 w-3 mr-1" />2 {t("habitsInCategory")}
                     </p>
                   </div>
                 </div>
@@ -371,7 +372,7 @@ const HabitsPage = () => {
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Habits and Today's Tasks */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Habits List */}
@@ -384,18 +385,18 @@ const HabitsPage = () => {
             <Card className="border-none shadow-md h-full">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>My Habits</CardTitle>
+                  <CardTitle>{t("myHabits")}</CardTitle>
                   <Tabs defaultValue="all" onValueChange={setActiveTab}>
                     <TabsList>
-                      <TabsTrigger value="all">All</TabsTrigger>
-                      <TabsTrigger value="daily">Daily</TabsTrigger>
-                      <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                      <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                      <TabsTrigger value="all">{t("all")}</TabsTrigger>
+                      <TabsTrigger value="daily">{t("daily")}</TabsTrigger>
+                      <TabsTrigger value="weekly">{t("weekly")}</TabsTrigger>
+                      <TabsTrigger value="monthly">{t("monthly")}</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
                 <CardDescription>
-                  Track your habits and build consistent routines
+                  {t("trackHabitsRoutines")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -435,15 +436,15 @@ const HabitsPage = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Mark Complete</DropdownMenuItem>
-                              <DropdownMenuItem>Edit Habit</DropdownMenuItem>
+                              <DropdownMenuItem>{t("markComplete")}</DropdownMenuItem>
+                              <DropdownMenuItem>{t("editHabit")}</DropdownMenuItem>
                               <DropdownMenuItem className="text-red-600">
-                                Delete
+                                {t("delete")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-
+  
                         <div className="flex items-center mt-4 text-sm text-gray-500">
                           <span className="flex items-center mr-4">
                             <Calendar className="h-4 w-4 mr-1" />
@@ -462,10 +463,10 @@ const HabitsPage = () => {
                             {habit.category}
                           </span>
                         </div>
-
+  
                         <div className="mt-4">
                           <div className="flex justify-between mb-1 text-sm">
-                            <span>Completion Rate</span>
+                            <span>{t("completionRate")}</span>
                             <span>{habit.completionRate}%</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -483,27 +484,27 @@ const HabitsPage = () => {
                             ></div>
                           </div>
                         </div>
-
+  
                         <div className="mt-4">
                           <h4 className="text-sm font-medium mb-2">
-                            Last 7 Days
+                            {t("last7Days")}
                           </h4>
                           <div className="flex space-x-1">
                             {habit.history.slice(-7).map((day, index) => (
                               <div
                                 key={index}
                                 className={`h-6 w-6 rounded-sm flex items-center justify-center text-xs ${day.completed ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}
-                                title={`${day.date}: ${day.completed ? "Completed" : "Missed"}`}
+                                title={`${day.date}: ${day.completed ? t("completed") : t("missed")}`}
                               >
                                 {day.completed ? "✓" : "×"}
                               </div>
                             ))}
                           </div>
                         </div>
-
+  
                         <div className="mt-4 flex justify-between items-center">
                           <span className="text-sm text-gray-500">
-                            Current streak: {habit.streak} days
+                            {t("currentStreak")}: {habit.streak} {t("days")}
                           </span>
                           <Button
                             variant="outline"
@@ -514,8 +515,8 @@ const HabitsPage = () => {
                             }
                           >
                             {habit.history[habit.history.length - 1]?.completed
-                              ? "Completed Today"
-                              : "Mark Complete"}
+                              ? t("completedToday")
+                              : t("markComplete")}
                           </Button>
                         </div>
                       </div>
@@ -529,12 +530,12 @@ const HabitsPage = () => {
                   className="w-full sm:w-auto flex items-center gap-2"
                 >
                   <Plus size={16} />
-                  Add New Habit
+                  {t("addNewHabit")}
                 </Button>
               </CardFooter>
             </Card>
           </motion.div>
-
+  
           {/* Today's Habits */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -543,9 +544,9 @@ const HabitsPage = () => {
           >
             <Card className="border-none shadow-md h-full">
               <CardHeader>
-                <CardTitle>Today's Habits</CardTitle>
+                <CardTitle>{t("todaysHabits")}</CardTitle>
                 <CardDescription>
-                  Complete these habits to maintain your streaks
+                  {t("completeHabitsToMaintain")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -585,7 +586,7 @@ const HabitsPage = () => {
                             variant="ghost"
                             className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
                           >
-                            Complete
+                            {t("complete")}
                           </Button>
                         )}
                       </div>
@@ -595,17 +596,16 @@ const HabitsPage = () => {
               </CardContent>
               <CardFooter className="border-t pt-4">
                 <div className="w-full text-center text-sm text-gray-500">
-                  <div className="font-medium mb-1">Habit Science</div>
+                  <div className="font-medium mb-1">{t("habitScience")}</div>
                   <p>
-                    Research shows that it takes an average of 66 days to form a
-                    new habit
+                    {t("habitFormationTime")}
                   </p>
                 </div>
               </CardFooter>
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Motivation Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -618,27 +618,22 @@ const HabitsPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="col-span-2">
                   <h2 className="text-2xl font-bold mb-2">
-                    The Science of Habit Formation
+                    {t("scienceOfHabitFormation")}
                   </h2>
                   <p className="mb-4">
-                    According to research by James Clear, author of "Atomic
-                    Habits", small habits compound over time. The effects of
-                    your habits multiply as you repeat them. They seem to make
-                    little difference on any given day but the impact they
-                    deliver over months and years can be enormous.
+                    {t("atomicHabitsDescription")}
                   </p>
                   <Button
                     variant="secondary"
                     className="bg-white text-blue-600 hover:bg-gray-100"
                   >
-                    Learn More About Habit Science
+                    {t("learnMoreAboutHabitScience")}
                   </Button>
                 </div>
                 <div className="flex flex-col justify-center items-center bg-white/10 rounded-lg p-4">
                   <div className="text-4xl font-bold mb-2">1%</div>
                   <p className="text-center text-sm">
-                    Getting 1% better every day compounds to a 37x improvement
-                    over a year
+                    {t("onePercentBetterCompound")}
                   </p>
                 </div>
               </div>

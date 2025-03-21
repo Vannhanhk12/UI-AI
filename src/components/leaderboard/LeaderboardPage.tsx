@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface User {
   id: number;
@@ -58,6 +59,7 @@ interface Badge {
 const LeaderboardPage = () => {
   const [activeTab, setActiveTab] = useState("weekly");
   const [category, setCategory] = useState("all");
+  const { t } = useTranslation();
 
   // Mock data for users
   const users: User[] = [
@@ -266,28 +268,28 @@ const LeaderboardPage = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Leaderboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("leaderboard")}</h1>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t("selectCategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="tasks">Tasks Completed</SelectItem>
-                  <SelectItem value="streaks">Streak Days</SelectItem>
-                  <SelectItem value="goals">Goals Achieved</SelectItem>
+                  <SelectItem value="all">{t("allCategories")}</SelectItem>
+                  <SelectItem value="tasks">{t("tasksCompleted")}</SelectItem>
+                  <SelectItem value="streaks">{t("streakDays")}</SelectItem>
+                  <SelectItem value="goals">{t("goalsAchieved")}</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter size={16} />
-                Filter
+                {t("filter")}
               </Button>
             </div>
           </div>
         </div>
       </header>
-
+  
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Top 3 Users Podium */}
@@ -298,7 +300,7 @@ const LeaderboardPage = () => {
           className="mb-8"
         >
           <div className="flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-6">Top Performers</h2>
+            <h2 className="text-xl font-bold mb-6">{t("topPerformers")}</h2>
             <div className="flex flex-col md:flex-row items-end justify-center gap-4 w-full">
               {/* 2nd Place */}
               <div className="flex flex-col items-center">
@@ -314,7 +316,7 @@ const LeaderboardPage = () => {
                 <div className="mt-2 text-center">
                   <div className="font-semibold">{topUsers[1].name}</div>
                   <div className="text-sm text-gray-500">
-                    {topUsers[1].points} pts
+                    {topUsers[1].points} {t("pts")}
                   </div>
                 </div>
                 <div className="bg-gray-100 h-24 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
@@ -322,7 +324,7 @@ const LeaderboardPage = () => {
                   <span className="text-xl font-bold ml-1">2</span>
                 </div>
               </div>
-
+  
               {/* 1st Place */}
               <div className="flex flex-col items-center">
                 <div className="relative">
@@ -340,7 +342,7 @@ const LeaderboardPage = () => {
                 <div className="mt-2 text-center">
                   <div className="font-semibold">{topUsers[0].name}</div>
                   <div className="text-sm text-gray-500">
-                    {topUsers[0].points} pts
+                    {topUsers[0].points} {t("pts")}
                   </div>
                 </div>
                 <div className="bg-yellow-100 h-32 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
@@ -348,7 +350,7 @@ const LeaderboardPage = () => {
                   <span className="text-xl font-bold ml-1">1</span>
                 </div>
               </div>
-
+  
               {/* 3rd Place */}
               <div className="flex flex-col items-center">
                 <Avatar className="h-16 w-16 border-2 border-gray-200">
@@ -363,7 +365,7 @@ const LeaderboardPage = () => {
                 <div className="mt-2 text-center">
                   <div className="font-semibold">{topUsers[2].name}</div>
                   <div className="text-sm text-gray-500">
-                    {topUsers[2].points} pts
+                    {topUsers[2].points} {t("pts")}
                   </div>
                 </div>
                 <div className="bg-orange-100 h-16 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
@@ -374,7 +376,7 @@ const LeaderboardPage = () => {
             </div>
           </div>
         </motion.div>
-
+  
         {/* Tabs for different time periods */}
         <Tabs
           defaultValue="weekly"
@@ -382,11 +384,11 @@ const LeaderboardPage = () => {
           onValueChange={setActiveTab}
         >
           <TabsList className="grid w-full md:w-auto grid-cols-3 mb-6">
-            <TabsTrigger value="weekly">Weekly</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="alltime">All Time</TabsTrigger>
+            <TabsTrigger value="weekly">{t("weekly")}</TabsTrigger>
+            <TabsTrigger value="monthly">{t("monthly")}</TabsTrigger>
+            <TabsTrigger value="alltime">{t("allTime")}</TabsTrigger>
           </TabsList>
-
+  
           <TabsContent value="weekly" className="space-y-6">
             {/* Your Position */}
             <motion.div
@@ -408,9 +410,9 @@ const LeaderboardPage = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="text-lg font-semibold">Your Position</h3>
+                        <h3 className="text-lg font-semibold">{t("yourPosition")}</h3>
                         <p className="text-blue-100">
-                          Keep going to climb the ranks!
+                          {t("keepGoingToClimb")}
                         </p>
                       </div>
                     </div>
@@ -419,26 +421,26 @@ const LeaderboardPage = () => {
                         <div className="text-3xl font-bold">
                           {currentUser.rank}
                         </div>
-                        <div className="text-sm text-blue-200">Rank</div>
+                        <div className="text-sm text-blue-200">{t("rank")}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold">
                           {currentUser.points}
                         </div>
-                        <div className="text-sm text-blue-200">Points</div>
+                        <div className="text-sm text-blue-200">{t("points")}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold">
                           {currentUser.tasksCompleted}
                         </div>
-                        <div className="text-sm text-blue-200">Tasks</div>
+                        <div className="text-sm text-blue-200">{t("tasks")}</div>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
-
+  
             {/* Full Leaderboard */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -447,9 +449,9 @@ const LeaderboardPage = () => {
             >
               <Card className="border-none shadow-md">
                 <CardHeader>
-                  <CardTitle>Weekly Leaderboard</CardTitle>
+                  <CardTitle>{t("weeklyLeaderboard")}</CardTitle>
                   <CardDescription>
-                    Rankings based on points earned this week
+                    {t("rankingsBasedOnWeek")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -458,22 +460,22 @@ const LeaderboardPage = () => {
                       <thead>
                         <tr className="border-b">
                           <th className="text-left py-3 px-4 font-medium text-gray-500">
-                            Rank
+                            {t("rank")}
                           </th>
                           <th className="text-left py-3 px-4 font-medium text-gray-500">
-                            User
+                            {t("user")}
                           </th>
                           <th className="text-right py-3 px-4 font-medium text-gray-500">
-                            Points
+                            {t("points")}
                           </th>
                           <th className="text-right py-3 px-4 font-medium text-gray-500">
-                            Tasks
+                            {t("tasks")}
                           </th>
                           <th className="text-right py-3 px-4 font-medium text-gray-500">
-                            Streak
+                            {t("streak")}
                           </th>
                           <th className="text-right py-3 px-4 font-medium text-gray-500">
-                            Badges
+                            {t("badges")}
                           </th>
                         </tr>
                       </thead>
@@ -528,7 +530,7 @@ const LeaderboardPage = () => {
                               {user.tasksCompleted}
                             </td>
                             <td className="py-3 px-4 text-right">
-                              {user.streakDays} days
+                              {user.streakDays} {t("days")}
                             </td>
                             <td className="py-3 px-4 text-right">
                               <div className="flex justify-end space-x-1">
@@ -575,42 +577,40 @@ const LeaderboardPage = () => {
                 </CardContent>
                 <CardFooter className="border-t pt-4">
                   <div className="w-full text-center text-sm text-gray-500">
-                    Rankings update daily at midnight
+                    {t("rankingsUpdate")}
                   </div>
                 </CardFooter>
               </Card>
             </motion.div>
           </TabsContent>
-
+  
           <TabsContent value="monthly">
             <Card className="border-none shadow-md">
               <CardHeader>
-                <CardTitle>Monthly Leaderboard</CardTitle>
+                <CardTitle>{t("monthlyLeaderboard")}</CardTitle>
                 <CardDescription>
-                  Rankings based on points earned this month
+                  {t("rankingsBasedOnMonth")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-8 text-gray-500">
-                  Monthly leaderboard data would be displayed here with similar
-                  structure to weekly
+                  {t("monthlyLeaderboardData")}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-
+  
           <TabsContent value="alltime">
             <Card className="border-none shadow-md">
               <CardHeader>
-                <CardTitle>All-Time Leaderboard</CardTitle>
+                <CardTitle>{t("allTimeLeaderboard")}</CardTitle>
                 <CardDescription>
-                  Rankings based on all-time performance
+                  {t("rankingsBasedOnAllTime")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-8 text-gray-500">
-                  All-time leaderboard data would be displayed here with similar
-                  structure to weekly
+                  {t("allTimeLeaderboardData")}
                 </div>
               </CardContent>
             </Card>
