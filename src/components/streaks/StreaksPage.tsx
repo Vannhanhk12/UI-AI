@@ -28,6 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface Streak {
   id: number;
@@ -48,6 +49,7 @@ interface StreakDay {
 
 const StreaksPage = () => {
   const [activeTab, setActiveTab] = useState("active");
+    const { t } = useTranslation();
 
   // Mock data
   const streaks: Streak[] = [
@@ -169,15 +171,15 @@ const StreaksPage = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Streak Tracker</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("streakTracker")}</h1>
             <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 mt-4 md:mt-0">
               <Plus size={16} />
-              Create New Streak
+              {t("createNewStreak")}
             </Button>
           </div>
         </div>
       </header>
-
+  
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats cards */}
@@ -190,7 +192,7 @@ const StreaksPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Active Streaks
+                  {t("activeStreaks")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -205,14 +207,14 @@ const StreaksPage = () => {
                     <p className="text-xs text-orange-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {Math.round((totalActiveStreaks / streaks.length) * 100)}%
-                      active rate
+                      {t("activeRate")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -221,7 +223,7 @@ const StreaksPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Longest Current Streak
+                  {t("longestCurrentStreak")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -231,18 +233,18 @@ const StreaksPage = () => {
                   </div>
                   <div>
                     <div className="text-3xl font-bold">
-                      {longestCurrentStreak} days
+                      {longestCurrentStreak} {t("days")}
                     </div>
                     <p className="text-xs text-red-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      Daily Coding Practice
+                      {t("dailyCodingPractice")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -251,7 +253,7 @@ const StreaksPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  All-Time Record
+                  {t("allTimeRecord")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -261,7 +263,7 @@ const StreaksPage = () => {
                   </div>
                   <div>
                     <div className="text-3xl font-bold">
-                      {streakWithLongestHistory.longestStreak} days
+                      {streakWithLongestHistory.longestStreak} {t("days")}
                     </div>
                     <p className="text-xs text-purple-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
@@ -272,7 +274,7 @@ const StreaksPage = () => {
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -281,7 +283,7 @@ const StreaksPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Total Completions
+                  {t("totalCompletions")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -293,7 +295,7 @@ const StreaksPage = () => {
                     <div className="text-3xl font-bold">{totalCompletions}</div>
                     <p className="text-xs text-green-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      Across all habits
+                      {t("acrossAllHabits")}
                     </p>
                   </div>
                 </div>
@@ -301,7 +303,7 @@ const StreaksPage = () => {
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Streaks and Today's Tasks */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Streaks List */}
@@ -314,17 +316,17 @@ const StreaksPage = () => {
             <Card className="border-none shadow-md h-full">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>My Streaks</CardTitle>
+                  <CardTitle>{t("myStreaks")}</CardTitle>
                   <Tabs defaultValue="active" onValueChange={setActiveTab}>
                     <TabsList>
-                      <TabsTrigger value="active">Active</TabsTrigger>
-                      <TabsTrigger value="broken">Broken</TabsTrigger>
-                      <TabsTrigger value="all">All</TabsTrigger>
+                      <TabsTrigger value="active">{t("active")}</TabsTrigger>
+                      <TabsTrigger value="broken">{t("broken")}</TabsTrigger>
+                      <TabsTrigger value="all">{t("all")}</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
                 <CardDescription>
-                  Track your daily habits and build consistent routines
+                  {t("trackDailyHabits")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -364,50 +366,50 @@ const StreaksPage = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Mark Complete</DropdownMenuItem>
-                              <DropdownMenuItem>Edit Streak</DropdownMenuItem>
+                              <DropdownMenuItem>{t("markComplete")}</DropdownMenuItem>
+                              <DropdownMenuItem>{t("editStreak")}</DropdownMenuItem>
                               <DropdownMenuItem className="text-red-600">
-                                Delete
+                                {t("delete")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-
+  
                         <div className="flex items-center mt-4 text-sm text-gray-500">
                           <span className="flex items-center mr-4">
                             <Flame className="h-4 w-4 mr-1" />
-                            Current: {streak.currentStreak} days
+                            {t("current")}: {streak.currentStreak} {t("days")}
                           </span>
                           <span className="flex items-center mr-4">
                             <Trophy className="h-4 w-4 mr-1" />
-                            Best: {streak.longestStreak} days
+                            {t("best")}: {streak.longestStreak} {t("days")}
                           </span>
                           <span className="flex items-center">
                             <Calendar className="h-4 w-4 mr-1" />
                             {streak.category}
                           </span>
                         </div>
-
+  
                         <div className="mt-4">
                           <h4 className="text-sm font-medium mb-2">
-                            Last 10 Days
+                            {t("last10Days")}
                           </h4>
                           <div className="flex space-x-1">
                             {streak.history.slice(-10).map((day, index) => (
                               <div
                                 key={index}
                                 className={`h-6 w-6 rounded-sm flex items-center justify-center text-xs ${day.completed ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}
-                                title={`${day.date}: ${day.completed ? "Completed" : "Missed"}`}
+                                title={`${day.date}: ${day.completed ? t("completed") : t("missed")}`}
                               >
                                 {day.completed ? "✓" : "×"}
                               </div>
                             ))}
                           </div>
                         </div>
-
+  
                         <div className="mt-4 flex justify-between items-center">
                           <span className="text-sm text-gray-500">
-                            {streak.totalCompletions} total completions
+                            {streak.totalCompletions} {t("totalCompletionsCount")}
                           </span>
                           <Button
                             variant="outline"
@@ -419,8 +421,8 @@ const StreaksPage = () => {
                             }
                           >
                             {streak.history[streak.history.length - 1].completed
-                              ? "Completed Today"
-                              : "Mark Complete"}
+                              ? t("completedToday")
+                              : t("markComplete")}
                           </Button>
                         </div>
                       </div>
@@ -434,12 +436,12 @@ const StreaksPage = () => {
                   className="w-full sm:w-auto flex items-center gap-2"
                 >
                   <Plus size={16} />
-                  Add New Streak
+                  {t("addNewStreak")}
                 </Button>
               </CardFooter>
             </Card>
           </motion.div>
-
+  
           {/* Today's Streaks */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -448,9 +450,9 @@ const StreaksPage = () => {
           >
             <Card className="border-none shadow-md h-full">
               <CardHeader>
-                <CardTitle>Today's Habits</CardTitle>
+                <CardTitle>{t("todaysHabits")}</CardTitle>
                 <CardDescription>
-                  Complete these tasks to maintain your streaks
+                  {t("completeTasksToMaintain")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -484,7 +486,7 @@ const StreaksPage = () => {
                             variant="ghost"
                             className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
                           >
-                            Complete
+                            {t("complete")}
                           </Button>
                         )}
                       </div>
@@ -494,17 +496,16 @@ const StreaksPage = () => {
               </CardContent>
               <CardFooter className="border-t pt-4">
                 <div className="w-full text-center text-sm text-gray-500">
-                  <div className="font-medium mb-1">Streak Science</div>
+                  <div className="font-medium mb-1">{t("streakScience")}</div>
                   <p>
-                    Maintaining a streak for 66 days is proven to form a lasting
-                    habit
+                    {t("maintainingStreak66Days")}
                   </p>
                 </div>
               </CardFooter>
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Motivation Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -517,27 +518,22 @@ const StreaksPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="col-span-2">
                   <h2 className="text-2xl font-bold mb-2">
-                    The Science of Habit Formation
+                    {t("scienceOfHabitFormation")}
                   </h2>
                   <p className="mb-4">
-                    Research shows that it takes an average of 66 days to form a
-                    new habit. Visual streak tracking leverages the
-                    psychological principle of "loss aversion" - we're more
-                    motivated to avoid breaking a streak than to start a new
-                    one.
+                    {t("habitFormationDesc")}
                   </p>
                   <Button
                     variant="secondary"
                     className="bg-white text-orange-600 hover:bg-gray-100"
                   >
-                    Learn More About Habit Science
+                    {t("learnMoreAboutHabitScience")}
                   </Button>
                 </div>
                 <div className="flex flex-col justify-center items-center bg-white/10 rounded-lg p-4">
                   <div className="text-4xl font-bold mb-2">21x</div>
                   <p className="text-center text-sm">
-                    People with visual streak tracking are 21 times more likely
-                    to maintain daily habits
+                    {t("visualStreakTrackingBenefit")}
                   </p>
                 </div>
               </div>

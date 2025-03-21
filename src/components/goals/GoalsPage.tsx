@@ -27,6 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface Goal {
   id: number;
@@ -47,6 +48,7 @@ interface Milestone {
 
 const GoalsPage = () => {
   const [activeTab, setActiveTab] = useState("active");
+  const { t } = useTranslation();
 
   // Mock data
   const goals: Goal[] = [
@@ -239,15 +241,15 @@ const GoalsPage = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Goals Tracker</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("goalsTracker")}</h1>
             <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 mt-4 md:mt-0">
               <Plus size={16} />
-              Create New Goal
+              {t("createNewGoal")}
             </Button>
           </div>
         </div>
       </header>
-
+  
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats cards */}
@@ -260,7 +262,7 @@ const GoalsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Total Goals
+                  {t("totalGoals")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -271,14 +273,15 @@ const GoalsPage = () => {
                   <div>
                     <div className="text-3xl font-bold">{goals.length}</div>
                     <p className="text-xs text-purple-600 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-1" />2 new this month
+                      <ArrowUpRight className="h-3 w-3 mr-1" />
+                      2 {t("newThisMonth")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -287,7 +290,7 @@ const GoalsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Completed Goals
+                  {t("completedGoals")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -300,14 +303,14 @@ const GoalsPage = () => {
                     <p className="text-xs text-green-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {Math.round((completedGoals / goals.length) * 100)}%
-                      completion rate
+                      {t("completionRate")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -316,7 +319,7 @@ const GoalsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  In Progress
+                  {t("inProgress")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -328,15 +331,14 @@ const GoalsPage = () => {
                     <div className="text-3xl font-bold">{inProgressGoals}</div>
                     <p className="text-xs text-blue-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      {Math.round((inProgressGoals / goals.length) * 100)}% of
-                      total goals
+                      {Math.round((inProgressGoals / goals.length) * 100)}% {t("ofTotalGoals")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -345,7 +347,7 @@ const GoalsPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Milestone Progress
+                  {t("milestoneProgress")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -376,7 +378,7 @@ const GoalsPage = () => {
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Goals and Milestones */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Goals List */}
@@ -389,18 +391,17 @@ const GoalsPage = () => {
             <Card className="border-none shadow-md h-full">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>My Goals</CardTitle>
+                  <CardTitle>{t("myGoals")}</CardTitle>
                   <Tabs defaultValue="active" onValueChange={setActiveTab}>
                     <TabsList>
-                      <TabsTrigger value="active">Active</TabsTrigger>
-                      <TabsTrigger value="completed">Completed</TabsTrigger>
-                      <TabsTrigger value="all">All</TabsTrigger>
+                      <TabsTrigger value="active">{t("active")}</TabsTrigger>
+                      <TabsTrigger value="completed">{t("completed")}</TabsTrigger>
+                      <TabsTrigger value="all">{t("all")}</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
                 <CardDescription>
-                  Track your progress towards your personal and professional
-                  goals
+                  {t("trackYourProgress")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -431,29 +432,29 @@ const GoalsPage = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Edit Goal</DropdownMenuItem>
-                              <DropdownMenuItem>Add Milestone</DropdownMenuItem>
+                              <DropdownMenuItem>{t("editGoal")}</DropdownMenuItem>
+                              <DropdownMenuItem>{t("addMilestone")}</DropdownMenuItem>
                               <DropdownMenuItem className="text-red-600">
-                                Delete
+                                {t("delete")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-
+  
                         <div className="flex items-center mt-4 text-sm text-gray-500">
                           <span className="flex items-center mr-4">
                             <Calendar className="h-4 w-4 mr-1" />
-                            Due: {new Date(goal.deadline).toLocaleDateString()}
+                            {t("due")}: {new Date(goal.deadline).toLocaleDateString()}
                           </span>
                           <span className="flex items-center">
                             <Target className="h-4 w-4 mr-1" />
-                            {goal.category}
+                            {t(goal.category.toLowerCase(), goal.category)}
                           </span>
                         </div>
-
+  
                         <div className="mt-4">
                           <div className="flex justify-between mb-1 text-sm">
-                            <span>Progress</span>
+                            <span>{t("progress")}</span>
                             <span>{goal.progress}%</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -471,10 +472,10 @@ const GoalsPage = () => {
                             ></div>
                           </div>
                         </div>
-
+  
                         <div className="mt-4">
                           <h4 className="text-sm font-medium mb-2">
-                            Recent Milestones
+                            {t("recentMilestones")}
                           </h4>
                           <div className="space-y-2">
                             {goal.milestones.slice(0, 3).map((milestone) => (
@@ -509,14 +510,14 @@ const GoalsPage = () => {
                             ))}
                           </div>
                         </div>
-
+  
                         {goal.milestones.length > 3 && (
                           <Button
                             variant="ghost"
                             size="sm"
                             className="mt-2 text-blue-600 hover:text-blue-800 p-0 h-auto"
                           >
-                            View all {goal.milestones.length} milestones
+                            {t("viewAllMilestones", { count: goal.milestones.length })}
                             <ChevronRight className="h-4 w-4 ml-1" />
                           </Button>
                         )}
@@ -531,12 +532,12 @@ const GoalsPage = () => {
                   className="w-full sm:w-auto flex items-center gap-2"
                 >
                   <Plus size={16} />
-                  Add New Goal
+                  {t("addNewGoal")}
                 </Button>
               </CardFooter>
             </Card>
           </motion.div>
-
+  
           {/* Upcoming Milestones */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -545,9 +546,9 @@ const GoalsPage = () => {
           >
             <Card className="border-none shadow-md h-full">
               <CardHeader>
-                <CardTitle>Upcoming Milestones</CardTitle>
+                <CardTitle>{t("upcomingMilestones")}</CardTitle>
                 <CardDescription>
-                  Your next steps towards achieving your goals
+                  {t("nextSteps")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -559,12 +560,12 @@ const GoalsPage = () => {
                     >
                       <h3 className="font-medium">{milestone.title}</h3>
                       <p className="text-sm text-gray-500 mt-1">
-                        Part of: {milestone.goalTitle}
+                        {t("partOf")}: {milestone.goalTitle}
                       </p>
                       <div className="flex items-center mt-2 text-sm">
                         <Calendar className="h-4 w-4 mr-1 text-gray-400" />
                         <span className="text-gray-500">
-                          Due:{" "}
+                          {t("due")}:{" "}
                           {new Date(milestone.dueDate).toLocaleDateString()}
                         </span>
                       </div>
@@ -574,14 +575,13 @@ const GoalsPage = () => {
               </CardContent>
               <CardFooter className="border-t pt-4">
                 <div className="w-full text-center text-sm text-gray-500">
-                  Completing milestones regularly increases your chances of
-                  achieving goals by 80%
+                  {t("milestonesCompletionTip")}
                 </div>
               </CardFooter>
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Motivation Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -594,26 +594,22 @@ const GoalsPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="col-span-2">
                   <h2 className="text-2xl font-bold mb-2">
-                    Goal Setting Science
+                    {t("goalSettingScience")}
                   </h2>
                   <p className="mb-4">
-                    Research shows that people who explicitly set goals are 10x
-                    more likely to achieve them than those who don't. Breaking
-                    down goals into smaller milestones activates your brain's
-                    reward system with each completion.
+                    {t("goalSettingScienceDesc")}
                   </p>
                   <Button
                     variant="secondary"
                     className="bg-white text-blue-600 hover:bg-gray-100"
                   >
-                    Learn More About Goal Science
+                    {t("learnMoreAboutGoalScience")}
                   </Button>
                 </div>
                 <div className="flex flex-col justify-center items-center bg-white/10 rounded-lg p-4">
                   <div className="text-4xl font-bold mb-2">42%</div>
                   <p className="text-center text-sm">
-                    Higher success rate when goals are tracked visually and
-                    reviewed weekly
+                    {t("higherSuccessRate")}
                   </p>
                 </div>
               </div>
