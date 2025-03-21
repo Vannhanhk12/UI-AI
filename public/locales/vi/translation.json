@@ -69,5 +69,12 @@
   "confirmPassword": "Xác nhận mật khẩu",
   "creatingAccount": "Đang tạo tài khoản...",
   "appName": "TaskMaster",
-  "toggleMenu": "Bật/tắt menu"
+  "toggleMenu": "Bật/tắt menu",
+  "expenses": "Chi tiêu",
+  "goals": "Mục tiêu",
+  "streaks": "Chuỗi hoạt động",
+  "leaderboard": "Bảng xếp hạng",
+  "habits": "Thói quen",
+  "collapseSidebar": "Thu gọn thanh bên",
+  "expandSidebar": "Mở rộng thanh bên"
 }

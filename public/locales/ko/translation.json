@@ -69,5 +69,12 @@
   "confirmPassword": "비밀번호 확인",
   "creatingAccount": "계정 생성 중...",
   "appName": "태스크마스터",
-  "toggleMenu": "메뉴 토글"
+  "toggleMenu": "메뉴 토글",
+  "expenses": "지출",
+  "goals": "목표",
+  "streaks": "연속 기록",
+  "leaderboard": "리더보드",
+  "habits": "습관",
+  "collapseSidebar": "사이드바 접기",
+  "expandSidebar": "사이드바 펼치기"
 }

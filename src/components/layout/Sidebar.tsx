@@ -14,21 +14,23 @@ import {
   FiBook,
 } from "react-icons/fi";
 import { useSidebar } from "../../context/SidebarContext";
+import { useTranslation } from "react-i18next";
 
 const Sidebar: React.FC = () => {
   const { isOpen, toggle } = useSidebar();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const navItems = [
-    { icon: <FiHome />, title: "Dashboard", path: "/dashboard" },
-    { icon: <FiCheckSquare />, title: "Tasks", path: "/tasks" },
-    { icon: <FiDollarSign />, title: "Expenses", path: "/expenses" },
-    { icon: <FiTarget />, title: "Goals", path: "/goals" },
-    { icon: <FiAward />, title: "Streaks", path: "/streaks" },
-    { icon: <FiTrendingUp />, title: "Leaderboard", path: "/leaderboard" },
-    { icon: <FiClock />, title: "Habits", path: "/habits" },
-    { icon: <FiBook />, title: "Blogs", path: "/blogs" },
-    { icon: <FiMessageSquare />, title: "AI Assistant", path: "/ai-chat" },
+    { icon: <FiHome />, title: t("dashboard"), path: "/dashboard" },
+    { icon: <FiCheckSquare />, title: t("tasks"), path: "/tasks" },
+    { icon: <FiDollarSign />, title: t("expenses"), path: "/expenses" },
+    { icon: <FiTarget />, title: t("goals"), path: "/goals" },
+    { icon: <FiAward />, title: t("streaks"), path: "/streaks" },
+    { icon: <FiTrendingUp />, title: t("leaderboard"), path: "/leaderboard" },
+    { icon: <FiClock />, title: t("habits"), path: "/habits" },
+    { icon: <FiBook />, title: t("blogs"), path: "/blogs" },
+    { icon: <FiMessageSquare />, title: t("aiAssistant"), path: "/ai-chat" },
   ];
 
   return (
@@ -43,7 +45,7 @@ const Sidebar: React.FC = () => {
           <button
             onClick={toggle}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
+            aria-label={isOpen ? t("collapseSidebar") : t("expandSidebar")}
           >
             <FiMenu size={24} />
           </button>
@@ -55,7 +57,7 @@ const Sidebar: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ delay: 0.1 }}
             >
-              NexaTask
+              {t("appName")}
             </motion.h1>
           )}
         </div>

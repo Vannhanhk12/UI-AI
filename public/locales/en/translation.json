@@ -69,5 +69,12 @@
   "confirmPassword": "Confirm Password",
   "creatingAccount": "Creating account...",
   "appName": "TaskMaster",
-  "toggleMenu": "Toggle menu"
+  "toggleMenu": "Toggle menu",
+  "expenses": "Expenses",
+  "goals": "Goals",
+  "streaks": "Streaks",
+  "leaderboard": "Leaderboard",
+  "habits": "Habits",
+  "collapseSidebar": "Collapse sidebar",
+  "expandSidebar": "Expand sidebar"
 }

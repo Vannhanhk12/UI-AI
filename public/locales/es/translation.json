@@ -69,5 +69,12 @@
   "confirmPassword": "Confirmar contraseña",
   "creatingAccount": "Creando cuenta...",
   "appName": "TaskMaster",
-  "toggleMenu": "Alternar menú"
+  "toggleMenu": "Alternar menú",
+  "expenses": "Gastos",
+  "goals": "Objetivos",
+  "streaks": "Rachas",
+  "leaderboard": "Tabla de clasificación",
+  "habits": "Hábitos",
+  "collapseSidebar": "Contraer barra lateral",
+  "expandSidebar": "Expandir barra lateral"
 }

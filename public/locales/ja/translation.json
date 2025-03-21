@@ -69,5 +69,12 @@
   "confirmPassword": "パスワードを確認",
   "creatingAccount": "アカウント作成中...",
   "appName": "タスクマスター",
-  "toggleMenu": "メニューを切り替える"
+  "toggleMenu": "メニューを切り替える",
+  "expenses": "支出",
+  "goals": "目標",
+  "streaks": "連続記録",
+  "leaderboard": "リーダーボード",
+  "habits": "習慣",
+  "collapseSidebar": "サイドバーを折りたたむ",
+  "expandSidebar": "サイドバーを展開"
 }
