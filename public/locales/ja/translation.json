@@ -67,5 +67,7 @@
   "createAccount": "アカウントを作成",
   "joinToday": "今日参加して始めましょう",
   "confirmPassword": "パスワードを確認",
-  "creatingAccount": "アカウント作成中..."
+  "creatingAccount": "アカウント作成中...",
+  "appName": "タスクマスター",
+  "toggleMenu": "メニューを切り替える"
 }

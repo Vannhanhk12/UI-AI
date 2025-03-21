@@ -128,7 +128,7 @@ const Navbar = () => {
             >
               <BarChart2 className="w-6 h-6 text-blue-600" />
             </motion.div>
-            <span className="text-xl font-bold text-gray-900">TaskMaster</span>
+            <span className="text-xl font-bold text-gray-900">{t("appName", "TaskMaster")}</span>
           </Link>
         </div>
 
@@ -150,7 +150,7 @@ const Navbar = () => {
 
         {/* User Profile & Logout */}
         <div className="hidden md:flex items-center ml-4 space-x-2">
-          <LanguageSwitcher />
+          <LanguageSwitcher isAdmin={true} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2">
@@ -190,7 +190,7 @@ const Navbar = () => {
             variant="ghost"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={t("toggleMenu", "Toggle menu")}
           >
             {isMobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -225,7 +225,7 @@ const Navbar = () => {
               </div>
             </div>
             <div className="py-2 mb-2 border-b border-gray-100">
-              <LanguageSwitcher />
+              <LanguageSwitcher isAdmin={true} />
             </div>
 
             {navItems.map((item) => (

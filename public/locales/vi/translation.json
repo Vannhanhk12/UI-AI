@@ -67,5 +67,7 @@
   "createAccount": "Tạo tài khoản",
   "joinToday": "Tham gia ngay hôm nay và bắt đầu",
   "confirmPassword": "Xác nhận mật khẩu",
-  "creatingAccount": "Đang tạo tài khoản..."
+  "creatingAccount": "Đang tạo tài khoản...",
+  "appName": "TaskMaster",
+  "toggleMenu": "Bật/tắt menu"
 }

@@ -67,5 +67,7 @@
   "createAccount": "Crear una cuenta",
   "joinToday": "Únete hoy y comienza",
   "confirmPassword": "Confirmar contraseña",
-  "creatingAccount": "Creando cuenta..."
+  "creatingAccount": "Creando cuenta...",
+  "appName": "TaskMaster",
+  "toggleMenu": "Alternar menú"
 }

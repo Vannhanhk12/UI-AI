@@ -67,5 +67,7 @@
   "createAccount": "계정 만들기",
   "joinToday": "오늘 가입하고 시작하세요",
   "confirmPassword": "비밀번호 확인",
-  "creatingAccount": "계정 생성 중..."
+  "creatingAccount": "계정 생성 중...",
+  "appName": "태스크마스터",
+  "toggleMenu": "메뉴 토글"
 }
