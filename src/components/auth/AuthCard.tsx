@@ -6,6 +6,7 @@ import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import AuthAnimation from "./AuthAnimation";
 import SocialLogin from "./SocialLogin";
+import { useTranslation } from "react-i18next";
 
 interface AuthCardProps {
   defaultTab?: "login" | "signup";
@@ -18,6 +19,7 @@ const AuthCard = ({
   defaultTab = "login",
   onAuthSuccess = () => console.log("Auth success"),
 }: AuthCardProps) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"login" | "signup">(defaultTab);
   const [animationState, setAnimationState] = useState<{
     type: AnimationType;
@@ -100,7 +102,7 @@ const AuthCard = ({
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  Nyan test UI
+                  {t("appTitle")}
                 </motion.h1>
                 <motion.p
                   className="text-blue-100"
@@ -109,11 +111,11 @@ const AuthCard = ({
                   transition={{ delay: 0.3 }}
                 >
                   {activeTab === "login"
-                    ? "Sign in to access your account"
-                    : "Create an account to get started"}
+                    ? t("signInToAccount")
+                    : t("createAccountToStart")}
                 </motion.p>
               </div>
-
+  
               <Tabs
                 defaultValue={activeTab}
                 value={activeTab}
@@ -125,14 +127,14 @@ const AuthCard = ({
                 <div className="px-6 pt-6">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="login" disabled={isLoading}>
-                      Login
+                      {t("login")}
                     </TabsTrigger>
                     <TabsTrigger value="signup" disabled={isLoading}>
-                      Sign Up
+                      {t("signUp")}
                     </TabsTrigger>
                   </TabsList>
                 </div>
-
+  
                 <div className="px-6 pb-6 pt-2">
                   <AnimatePresence mode="wait">
                     <TabsContent
@@ -145,7 +147,7 @@ const AuthCard = ({
                         isLoading={isLoading}
                       />
                     </TabsContent>
-
+  
                     <TabsContent
                       value="signup"
                       className="mt-4 focus-visible:outline-none focus-visible:ring-0"
@@ -161,7 +163,7 @@ const AuthCard = ({
             </CardContent>
           )}
         </Card>
-
+  
         {/* Decorative elements */}
         <motion.div
           className="absolute -z-10 w-72 h-72 bg-blue-500 rounded-full opacity-10 blur-3xl"

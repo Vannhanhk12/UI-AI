@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslation } from "react-i18next";
 
 interface Message {
   id: string;
@@ -74,6 +75,7 @@ const initialChatHistories: ChatHistory[] = [
 ];
 
 const AIChatPage = () => {
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatHistories, setChatHistories] =
@@ -192,23 +194,23 @@ const AIChatPage = () => {
       <div className="container mx-auto p-4 flex flex-col h-full">
         <div className="flex flex-col space-y-4 h-full">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">AI Assistant</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("aiAssistant")}</h1>
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
               className="w-[400px]"
             >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="chat">Chat</TabsTrigger>
-                <TabsTrigger value="history">History</TabsTrigger>
+                <TabsTrigger value="chat">{t("chat")}</TabsTrigger>
+                <TabsTrigger value="history">{t("history")}</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
-
+  
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 flex-1 overflow-hidden">
             <Card className="md:col-span-1 p-4 flex flex-col overflow-hidden bg-white">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Conversations</h2>
+                <h2 className="text-lg font-semibold">{t("conversations")}</h2>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -221,7 +223,7 @@ const AIChatPage = () => {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>New Chat</p>
+                      <p>{t("newChat")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -251,7 +253,7 @@ const AIChatPage = () => {
                 </div>
               </ScrollArea>
             </Card>
-
+  
             <Tabs value={activeTab} className="md:col-span-3">
               <TabsContent
                 value="chat"
@@ -271,12 +273,10 @@ const AIChatPage = () => {
                             <Bot size={48} className="text-blue-500" />
                           </motion.div>
                           <h3 className="text-xl font-medium text-gray-700">
-                            How can I help you today?
+                            {t("howCanIHelp")}
                           </h3>
                           <p className="text-gray-500 mt-2 max-w-md">
-                            I can analyze your tasks, suggest productivity
-                            improvements, and help you develop effective
-                            strategies.
+                            {t("aiDescription")}
                           </p>
                         </div>
                       ) : (
@@ -353,10 +353,10 @@ const AIChatPage = () => {
                       <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
-
+  
                   <div className="mt-4 flex items-end space-x-2">
                     <Textarea
-                      placeholder="Ask about your productivity, task patterns, or strategies..."
+                      placeholder={t("askAboutProductivity")}
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={(e) => {
@@ -377,14 +377,14 @@ const AIChatPage = () => {
                   </div>
                 </Card>
               </TabsContent>
-
+  
               <TabsContent value="history" className="md:col-span-3 mt-0">
                 <Card className="p-6 bg-white">
-                  <h2 className="text-xl font-semibold mb-4">Chat Analytics</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t("chatAnalytics")}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div className="bg-blue-50 p-4 rounded-lg">
                       <h3 className="text-sm font-medium text-blue-700">
-                        Total Conversations
+                        {t("totalConversations")}
                       </h3>
                       <p className="text-2xl font-bold">
                         {chatHistories.length}
@@ -392,45 +392,42 @@ const AIChatPage = () => {
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
                       <h3 className="text-sm font-medium text-green-700">
-                        Most Active Day
+                        {t("mostActiveDay")}
                       </h3>
-                      <p className="text-2xl font-bold">Tuesday</p>
+                      <p className="text-2xl font-bold">{t("tuesday")}</p>
                     </div>
                     <div className="bg-purple-50 p-4 rounded-lg">
                       <h3 className="text-sm font-medium text-purple-700">
-                        Common Topics
+                        {t("commonTopics")}
                       </h3>
-                      <p className="text-lg font-medium">Productivity, Goals</p>
+                      <p className="text-lg font-medium">{t("productivityGoals")}</p>
                     </div>
                   </div>
-
+  
                   <h3 className="text-lg font-semibold mb-3">
-                    Recent Insights
+                    {t("recentInsights")}
                   </h3>
                   <div className="space-y-3">
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">Task Completion Pattern</h4>
+                        <h4 className="font-medium">{t("taskCompletionPattern")}</h4>
                         <span className="text-xs text-gray-500">
-                          Generated yesterday
+                          {t("generatedYesterday")}
                         </span>
                       </div>
                       <p className="text-gray-700">
-                        You complete 37% more tasks when you start before 10 AM.
-                        Consider scheduling important work earlier in the day.
+                        {t("morningProductivityTip")}
                       </p>
                     </div>
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">Focus Time Analysis</h4>
+                        <h4 className="font-medium">{t("focusTimeAnalysis")}</h4>
                         <span className="text-xs text-gray-500">
-                          Generated 3 days ago
+                          {t("generated3DaysAgo")}
                         </span>
                       </div>
                       <p className="text-gray-700">
-                        Your average focus session lasts 32 minutes. Research
-                        suggests 52-minute work periods followed by 17-minute
-                        breaks for optimal productivity.
+                        {t("focusSessionTip")}
                       </p>
                     </div>
                   </div>
