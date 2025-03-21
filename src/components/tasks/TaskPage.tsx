@@ -26,6 +26,7 @@ import {
 } from "@/services/taskService";
 import { toast } from "sonner";
 import TaskItem from "./TaskItem";
+import { useTranslation } from "react-i18next";
 
 const motivationalSlogans = [
   "Hãy biến mỗi nhiệm vụ thành một bước tiến đến thành công!",
@@ -46,6 +47,7 @@ const TasksPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const { t } = useTranslation();
 
   // Load tasks from API
   const loadTasks = async () => {
@@ -67,7 +69,7 @@ const TasksPage: React.FC = () => {
 
   const [timer, setTimer] = useState<{
     active: boolean;
-    taskId: number | null;
+    taskId: string | null;
     timeLeft: number;
     initialTime: number;
     progress: number;
@@ -243,18 +245,18 @@ const TasksPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Task Manager</h1>
-
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">{t("taskManager")}</h1>
+  
         <motion.div
           className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-8"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          <h2 className="text-xl font-bold mb-2">Lời nhắc hôm nay</h2>
-          <p className="text-lg italic">"{slogan}"</p>
+          <h2 className="text-xl font-bold mb-2">{t("todayReminder")}</h2>
+          <p className="text-lg italic">"{t(`motivationalSlogan${Math.floor(Math.random() * motivationalSlogans.length)}`, slogan)}"</p>
         </motion.div>
-
+  
         <AnimatePresence>
           {timer.active && (
             <motion.div
@@ -269,14 +271,14 @@ const TasksPage: React.FC = () => {
                   <FiClock className="text-3xl mr-4" />
                   <div>
                     <p className="text-sm font-medium opacity-90">
-                      Đang tập trung vào:
+                      {t("focusingOn")}:
                     </p>
                     <p className="font-bold text-xl">
                       {tasks.find((t) => t.id === timer.taskId)?.title}
                     </p>
                   </div>
                 </div>
-
+  
                 <div className="flex flex-col items-center">
                   <div className="text-4xl font-bold mb-2">
                     {formatTime(timer.timeLeft)}
@@ -295,7 +297,7 @@ const TasksPage: React.FC = () => {
                       className="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors flex items-center"
                     >
                       <FiPlusCircle className="text-xl mr-1" />
-                      <span>Thêm thời gian</span>
+                      <span>{t("addTime")}</span>
                     </button>
                     <button
                       onClick={stopTimer}
@@ -306,7 +308,7 @@ const TasksPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-
+  
               <div className="mt-6 flex justify-center">
                 <motion.div
                   animate={{
@@ -332,7 +334,7 @@ const TasksPage: React.FC = () => {
                 >
                   <img
                     src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
-                    alt="Pikachu running for motivation"
+                    alt={t("motivationMascot")}
                     className="w-full h-full object-contain"
                   />
                 </motion.div>
@@ -340,25 +342,25 @@ const TasksPage: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
+  
         <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Nhiệm vụ</h2>
+            <h2 className="text-xl font-semibold text-gray-800">{t("tasks")}</h2>
             <button
               onClick={() => navigate("/tasks/new")}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center transition-colors"
             >
-              <FiPlus className="mr-2" /> Thêm nhiệm vụ
+              <FiPlus className="mr-2" /> {t("addTask")}
             </button>
           </div>
-
+  
           {isLoading ? (
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             </div>
           ) : tasks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              <p>No tasks found. Create your first task to get started!</p>
+              <p>{t("noTasksFound")}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -380,7 +382,7 @@ const TasksPage: React.FC = () => {
                   />
                 </motion.div>
               ))}
-
+  
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex justify-center mt-6 space-x-2">
@@ -389,10 +391,10 @@ const TasksPage: React.FC = () => {
                     disabled={page === 1}
                     className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
                   >
-                    Previous
+                    {t("previous")}
                   </button>
                   <span className="px-3 py-1">
-                    Page {page} of {totalPages}
+                    {t("page")} {page} {t("of")} {totalPages}
                   </span>
                   <button
                     onClick={() =>
@@ -401,17 +403,17 @@ const TasksPage: React.FC = () => {
                     disabled={page === totalPages}
                     className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
                   >
-                    Next
+                    {t("next")}
                   </button>
                 </div>
               )}
             </div>
           )}
         </div>
-
+  
         <div className="bg-white p-6 rounded-xl shadow-sm">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">
-            Thống kê tuần qua
+            {t("weeklyStats")}
           </h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -425,12 +427,12 @@ const TasksPage: React.FC = () => {
                 <Tooltip />
                 <Bar
                   dataKey="important"
-                  name="Nhiệm vụ quan trọng"
+                  name={t("importantTasks")}
                   fill="#ef4444"
                 />
                 <Bar
                   dataKey="completed"
-                  name="Nhiệm vụ hoàn thành"
+                  name={t("completedTasks")}
                   fill="#3b82f6"
                 />
               </BarChart>
@@ -438,18 +440,15 @@ const TasksPage: React.FC = () => {
           </div>
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-medium text-blue-800 mb-2">
-              Mẹo tăng năng suất:
+              {t("productivityTip")}:
             </h3>
             <p className="text-sm text-blue-700">
-              Hãy ưu tiên các nhiệm vụ quan trọng và khó khăn vào đầu ngày khi
-              năng lượng của bạn còn cao. Kỹ thuật Pomodoro (làm việc tập trung
-              25 phút, nghỉ 5 phút) có thể giúp bạn duy trì sự tập trung và năng
-              suất.
+              {t("productivityTipText")}
             </p>
           </div>
         </div>
       </motion.div>
-
+  
       {/* Modal to add time */}
       <AnimatePresence>
         {showAddTimeModal && (
@@ -465,7 +464,7 @@ const TasksPage: React.FC = () => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
             >
-              <h3 className="text-xl font-bold mb-4">Thêm thời gian</h3>
+              <h3 className="text-xl font-bold mb-4">{t("addTime")}</h3>
               <div className="grid grid-cols-3 gap-3 mb-4">
                 {[5, 10, 15, 20, 25, 30].map((minutes) => (
                   <button
@@ -473,7 +472,7 @@ const TasksPage: React.FC = () => {
                     onClick={() => addTime(minutes)}
                     className="bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"
                   >
-                    {minutes} phút
+                    {minutes} {t("minutes")}
                   </button>
                 ))}
               </div>
@@ -482,7 +481,7 @@ const TasksPage: React.FC = () => {
                   onClick={() => setShowAddTimeModal(false)}
                   className="text-gray-600 hover:text-gray-800"
                 >
-                  Hủy
+                  {t("cancel")}
                 </button>
               </div>
             </motion.div>

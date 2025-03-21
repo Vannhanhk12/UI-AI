@@ -39,6 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface Expense {
   id: number;
@@ -60,6 +61,7 @@ const COLORS = [
 const ExpensesPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [timeRange, setTimeRange] = useState("month");
+  const { t } = useTranslation();
 
   // Mock data
   const expenses: Expense[] = [
@@ -172,29 +174,29 @@ const ExpensesPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <h1 className="text-2xl font-bold text-gray-900">
-              Expenses Tracker
+              {t("expensesTracker")}
             </h1>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select time range" />
+                  <SelectValue placeholder={t("selectTimeRange")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="quarter">This Quarter</SelectItem>
-                  <SelectItem value="year">This Year</SelectItem>
+                  <SelectItem value="week">{t("thisWeek")}</SelectItem>
+                  <SelectItem value="month">{t("thisMonth")}</SelectItem>
+                  <SelectItem value="quarter">{t("thisQuarter")}</SelectItem>
+                  <SelectItem value="year">{t("thisYear")}</SelectItem>
                 </SelectContent>
               </Select>
               <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
                 <Plus size={16} />
-                Add Expense
+                {t("addExpense")}
               </Button>
             </div>
           </div>
         </div>
       </header>
-
+  
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats cards */}
@@ -207,7 +209,7 @@ const ExpensesPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Total Expenses
+                  {t("totalExpenses")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -219,14 +221,14 @@ const ExpensesPage = () => {
                     <div className="text-3xl font-bold">${totalExpenses}</div>
                     <p className="text-xs text-red-600 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      8% from last month
+                      8% {t("fromLastMonth")}
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -235,7 +237,7 @@ const ExpensesPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Biggest Category
+                  {t("biggestCategory")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -244,17 +246,17 @@ const ExpensesPage = () => {
                     <Filter className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">Food</div>
+                    <div className="text-3xl font-bold">{t("food")}</div>
                     <p className="text-xs text-blue-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      $185 (30% of total)
+                      $185 (30% {t("ofTotal")})
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
+  
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -263,7 +265,7 @@ const ExpensesPage = () => {
             <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
-                  Budget Status
+                  {t("budgetStatus")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -275,7 +277,7 @@ const ExpensesPage = () => {
                     <div className="text-3xl font-bold">65%</div>
                     <p className="text-xs text-green-600 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
-                      $330 remaining
+                      $330 {t("remaining")}
                     </p>
                   </div>
                 </div>
@@ -283,7 +285,7 @@ const ExpensesPage = () => {
             </Card>
           </motion.div>
         </div>
-
+  
         {/* Tabs */}
         <Tabs
           defaultValue="overview"
@@ -291,11 +293,11 @@ const ExpensesPage = () => {
           onValueChange={setActiveTab}
         >
           <TabsList className="grid w-full md:w-auto grid-cols-3 mb-6">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="transactions">Transactions</TabsTrigger>
-            <TabsTrigger value="budgets">Budgets</TabsTrigger>
+            <TabsTrigger value="overview">{t("overview")}</TabsTrigger>
+            <TabsTrigger value="transactions">{t("transactions")}</TabsTrigger>
+            <TabsTrigger value="budgets">{t("budgets")}</TabsTrigger>
           </TabsList>
-
+  
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Pie Chart */}
@@ -306,9 +308,9 @@ const ExpensesPage = () => {
               >
                 <Card className="border-none shadow-md h-full">
                   <CardHeader>
-                    <CardTitle>Expense Categories</CardTitle>
+                    <CardTitle>{t("expenseCategories")}</CardTitle>
                     <CardDescription>
-                      Breakdown of your expenses by category
+                      {t("expenseCategoriesDesc")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -324,7 +326,7 @@ const ExpensesPage = () => {
                             fill="#8884d8"
                             dataKey="value"
                             label={({ name, percent }) =>
-                              `${name}: ${(percent * 100).toFixed(0)}%`
+                              `${t(name.toLowerCase())}: ${(percent * 100).toFixed(0)}%`
                             }
                           >
                             {categoryData.map((entry, index) => (
@@ -335,7 +337,7 @@ const ExpensesPage = () => {
                             ))}
                           </Pie>
                           <Tooltip
-                            formatter={(value) => [`$${value}`, "Amount"]}
+                            formatter={(value) => [`$${value}`, t("amount")]}
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -343,7 +345,7 @@ const ExpensesPage = () => {
                   </CardContent>
                 </Card>
               </motion.div>
-
+  
               {/* Bar Chart */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -352,28 +354,32 @@ const ExpensesPage = () => {
               >
                 <Card className="border-none shadow-md h-full">
                   <CardHeader>
-                    <CardTitle>Weekly Spending</CardTitle>
+                    <CardTitle>{t("weeklySpending")}</CardTitle>
                     <CardDescription>
-                      Your spending pattern over the past month
+                      {t("weeklySpendingDesc")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                          data={weeklyData}
+                          data={weeklyData.map(item => ({
+                            ...item,
+                            name: t(item.name.toLowerCase().replace(/\s+/g, ''))
+                          }))}
                           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip
-                            formatter={(value) => [`$${value}`, "Amount"]}
+                            formatter={(value) => [`$${value}`, t("amount")]}
                           />
                           <Legend />
                           <Bar
                             dataKey="amount"
                             fill="#3B82F6"
+                            name={t("amount")}
                             radius={[4, 4, 0, 0]}
                           />
                         </BarChart>
@@ -383,7 +389,7 @@ const ExpensesPage = () => {
                 </Card>
               </motion.div>
             </div>
-
+  
             {/* Recent Transactions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -393,13 +399,13 @@ const ExpensesPage = () => {
               <Card className="border-none shadow-md">
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <CardTitle>Recent Transactions</CardTitle>
+                    <CardTitle>{t("recentTransactions")}</CardTitle>
                     <Button
                       variant="ghost"
                       size="sm"
                       className="text-blue-600 hover:text-blue-800"
                     >
-                      View All
+                      {t("viewAll")}
                     </Button>
                   </div>
                 </CardHeader>
@@ -427,10 +433,10 @@ const ExpensesPage = () => {
                           </div>
                           <div>
                             <h3 className="font-medium">
-                              {expense.description}
+                              {t(expense.description.toLowerCase(), expense.description)}
                             </h3>
                             <p className="text-sm text-gray-500">
-                              {expense.category} •{" "}
+                              {t(expense.category.toLowerCase())} •{" "}
                               {new Date(expense.date).toLocaleDateString()}
                             </p>
                           </div>
@@ -446,18 +452,18 @@ const ExpensesPage = () => {
                     className="w-full sm:w-auto flex items-center gap-2"
                   >
                     <Plus size={16} />
-                    Add New Expense
+                    {t("addNewExpense")}
                   </Button>
                 </CardFooter>
               </Card>
             </motion.div>
           </TabsContent>
-
+  
           <TabsContent value="transactions" className="space-y-6">
             <Card className="border-none shadow-md">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>All Transactions</CardTitle>
+                  <CardTitle>{t("allTransactions")}</CardTitle>
                   <div className="flex items-center space-x-2">
                     <Button
                       variant="outline"
@@ -465,7 +471,7 @@ const ExpensesPage = () => {
                       className="flex items-center gap-1"
                     >
                       <Filter size={14} />
-                      Filter
+                      {t("filter")}
                     </Button>
                     <Button
                       variant="outline"
@@ -473,7 +479,7 @@ const ExpensesPage = () => {
                       className="flex items-center gap-1"
                     >
                       <Calendar size={14} />
-                      Date Range
+                      {t("dateRange")}
                     </Button>
                   </div>
                 </div>
@@ -501,9 +507,11 @@ const ExpensesPage = () => {
                           />
                         </div>
                         <div>
-                          <h3 className="font-medium">{expense.description}</h3>
+                          <h3 className="font-medium">
+                            {t(expense.description.toLowerCase(), expense.description)}
+                          </h3>
                           <p className="text-sm text-gray-500">
-                            {expense.category} •{" "}
+                            {t(expense.category.toLowerCase())} •{" "}
                             {new Date(expense.date).toLocaleDateString()}
                           </p>
                         </div>
@@ -519,28 +527,28 @@ const ExpensesPage = () => {
                   className="w-full sm:w-auto flex items-center gap-2"
                 >
                   <Plus size={16} />
-                  Add New Expense
+                  {t("addNewExpense")}
                 </Button>
               </CardFooter>
             </Card>
           </TabsContent>
-
+  
           <TabsContent value="budgets" className="space-y-6">
             <Card className="border-none shadow-md">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>Budget Tracking</CardTitle>
+                  <CardTitle>{t("budgetTracking")}</CardTitle>
                   <Button
                     variant="outline"
                     size="sm"
                     className="flex items-center gap-1"
                   >
                     <Plus size={14} />
-                    New Budget
+                    {t("newBudget")}
                   </Button>
                 </div>
                 <CardDescription>
-                  Monitor your spending against your monthly budgets
+                  {t("budgetTrackingDesc")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -549,16 +557,16 @@ const ExpensesPage = () => {
                     <div key={index} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <div>
-                          <h3 className="font-medium">{item.category}</h3>
+                          <h3 className="font-medium">{t(item.category.toLowerCase())}</h3>
                           <div className="text-sm text-gray-500">
                             <span className="text-green-600">
-                              ${item.remaining} remaining
+                              ${item.remaining} {t("remaining")}
                             </span>{" "}
-                            of ${item.budget} budget
+                            {t("of")} ${item.budget} {t("budget")}
                           </div>
                         </div>
                         <span className="font-semibold">
-                          ${item.spent} spent
+                          ${item.spent} {t("spent")}
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -583,7 +591,7 @@ const ExpensesPage = () => {
                   className="w-full sm:w-auto flex items-center gap-2"
                 >
                   <Plus size={16} />
-                  Add New Budget Category
+                  {t("addNewBudgetCategory")}
                 </Button>
               </CardFooter>
             </Card>
