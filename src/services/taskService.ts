@@ -27,11 +27,20 @@ export interface Task {
 }
 
 export interface TasksResponse {
-  tasks: Task[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Task[];
+  meta: {
+    timestamp: string;
+    path: string;
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }
+  }
 }
 
 const handleResponse = async (response: Response) => {
@@ -60,7 +69,14 @@ export const fetchTasks = async (page = 1, limit = 10) => {
         },
       },
     );
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return {
+      tasks: data.data,
+      total: data.meta.pagination.total,
+      page: data.meta.pagination.page,
+      limit: data.meta.pagination.limit,
+      totalPages: data.meta.pagination.totalPages
+    };
   } catch (error) {
     console.error("Error fetching tasks:", error);
     toast.error("Failed to load tasks");
@@ -93,7 +109,8 @@ export const createTask = async (taskData: {
       body: JSON.stringify(taskData),
     });
 
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return data.data;
   } catch (error) {
     console.error("Error creating task:", error);
     toast.error("Failed to create task");
@@ -117,7 +134,8 @@ export const startTask = async (taskId: string) => {
       },
     });
 
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return data.data;
   } catch (error) {
     console.error("Error starting task:", error);
     toast.error("Failed to start task");
@@ -141,10 +159,96 @@ export const completeTask = async (taskId: string) => {
       },
     });
 
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return data.data;
   } catch (error) {
     console.error("Error completing task:", error);
     toast.error("Failed to complete task");
+    throw error;
+  }
+};
+
+export const updateTaskStatus = async (taskId: string, status: Task['status']) => {
+  try {
+    const token = getToken();
+    if (!token) {
+      toast.error("You must be logged in to update a task");
+      throw new Error("Authentication required");
+    }
+
+    const response = await fetch(`${API_URL}/tasks/${taskId}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    const data = await handleResponse(response);
+    return data.data;
+  } catch (error) {
+    console.error("Error updating task status:", error);
+    toast.error("Failed to update task status");
+    throw error;
+  }
+};
+
+export const failTask = async (taskId: string) => {
+  try {
+    const token = getToken();
+    if (!token) {
+      toast.error("You must be logged in to mark a task as failed");
+      throw new Error("Authentication required");
+    }
+
+    const response = await fetch(`${API_URL}/tasks/${taskId}/fail`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await handleResponse(response);
+    return data.data;
+  } catch (error) {
+    console.error("Error marking task as failed:", error);
+    toast.error("Failed to mark task as failed");
+    throw error;
+  }
+};
+
+export const updateTask = async (taskId: string, taskData: {
+  title?: string;
+  description?: string;
+  deadline?: string;
+  estimatedDuration?: number;
+  difficulty?: "EASY" | "MEDIUM" | "HARD";
+  priority?: "LOW" | "MEDIUM" | "HIGH";
+  status?: Task['status'];
+}) => {
+  try {
+    const token = getToken();
+    if (!token) {
+      toast.error("You must be logged in to update a task");
+      throw new Error("Authentication required");
+    }
+
+    const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(taskData),
+    });
+
+    const data = await handleResponse(response);
+    return data.data;
+  } catch (error) {
+    console.error("Error updating task:", error);
+    toast.error("Failed to update task");
     throw error;
   }
 };

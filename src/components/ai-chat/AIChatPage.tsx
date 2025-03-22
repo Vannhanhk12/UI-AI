@@ -190,11 +190,11 @@ const AIChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-50">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto p-4 flex flex-col h-full">
         <div className="flex flex-col space-y-4 h-full">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">{t("aiAssistant")}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("aiAssistant")}</h1>
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
@@ -208,9 +208,9 @@ const AIChatPage = () => {
           </div>
   
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 flex-1 overflow-hidden">
-            <Card className="md:col-span-1 p-4 flex flex-col overflow-hidden bg-white">
+            <Card className="md:col-span-1 p-4 flex flex-col overflow-hidden bg-white dark:bg-gray-800 dark:border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">{t("conversations")}</h2>
+                <h2 className="text-lg font-semibold dark:text-white">{t("conversations")}</h2>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -218,6 +218,7 @@ const AIChatPage = () => {
                         variant="ghost"
                         size="icon"
                         onClick={startNewChat}
+                        className="dark:text-gray-300 dark:hover:text-white"
                       >
                         <Sparkles className="h-4 w-4" />
                       </Button>
@@ -233,16 +234,20 @@ const AIChatPage = () => {
                   {chatHistories.map((chat) => (
                     <div
                       key={chat.id}
-                      className={`p-3 rounded-lg cursor-pointer transition-colors ${currentChatId === chat.id ? "bg-blue-100" : "hover:bg-gray-100"}`}
+                      className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                        currentChatId === chat.id 
+                          ? "bg-blue-100 dark:bg-blue-900/50" 
+                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                      }`}
                       onClick={() => selectChatHistory(chat.id)}
                     >
                       <div className="flex items-center justify-between">
-                        <h3 className="font-medium truncate">{chat.title}</h3>
-                        <span className="text-xs text-gray-500">
+                        <h3 className="font-medium truncate dark:text-white">{chat.title}</h3>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {formatDate(chat.createdAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500 truncate mt-1">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
                         {chat.messages[
                           chat.messages.length - 1
                         ]?.content.substring(0, 40)}
@@ -259,7 +264,7 @@ const AIChatPage = () => {
                 value="chat"
                 className="flex flex-col space-y-4 mt-0 h-full"
               >
-                <Card className="flex-1 p-4 flex flex-col overflow-hidden bg-white">
+                <Card className="flex-1 p-4 flex flex-col overflow-hidden bg-white dark:bg-gray-800 dark:border-gray-700">
                   <ScrollArea className="flex-1 pr-4">
                     <div className="space-y-4">
                       {messages.length === 0 ? (
@@ -270,12 +275,12 @@ const AIChatPage = () => {
                             transition={{ duration: 0.5 }}
                             className="mb-4"
                           >
-                            <Bot size={48} className="text-blue-500" />
+                            <Bot size={48} className="text-blue-500 dark:text-blue-400" />
                           </motion.div>
-                          <h3 className="text-xl font-medium text-gray-700">
+                          <h3 className="text-xl font-medium text-gray-700 dark:text-gray-200">
                             {t("howCanIHelp")}
                           </h3>
-                          <p className="text-gray-500 mt-2 max-w-md">
+                          <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md">
                             {t("aiDescription")}
                           </p>
                         </div>
@@ -289,7 +294,11 @@ const AIChatPage = () => {
                             className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                           >
                             <div
-                              className={`max-w-[80%] rounded-lg p-4 ${message.role === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"}`}
+                              className={`max-w-[80%] rounded-lg p-4 ${
+                                message.role === "user" 
+                                  ? "bg-blue-500 text-white" 
+                                  : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                              }`}
                             >
                               <div className="flex items-center space-x-2 mb-2">
                                 {message.role === "assistant" && (
@@ -312,7 +321,7 @@ const AIChatPage = () => {
                           animate={{ opacity: 1 }}
                           className="flex justify-start"
                         >
-                          <div className="bg-gray-100 rounded-lg p-4 max-w-[80%]">
+                          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 max-w-[80%]">
                             <div className="flex items-center space-x-2">
                               <Avatar className="h-6 w-6 bg-blue-700">
                                 <Bot size={14} className="text-white" />
@@ -325,7 +334,7 @@ const AIChatPage = () => {
                                     duration: 1,
                                     delay: 0,
                                   }}
-                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                  className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"
                                 />
                                 <motion.div
                                   animate={{ y: [0, -5, 0] }}
@@ -334,7 +343,7 @@ const AIChatPage = () => {
                                     duration: 1,
                                     delay: 0.2,
                                   }}
-                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                  className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"
                                 />
                                 <motion.div
                                   animate={{ y: [0, -5, 0] }}
@@ -343,7 +352,7 @@ const AIChatPage = () => {
                                     duration: 1,
                                     delay: 0.4,
                                   }}
-                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                  className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"
                                 />
                               </div>
                             </div>
@@ -365,7 +374,7 @@ const AIChatPage = () => {
                           handleSendMessage();
                         }
                       }}
-                      className="flex-1 min-h-[80px] resize-none"
+                      className="flex-1 min-h-[80px] resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
                     />
                     <Button
                       onClick={handleSendMessage}
@@ -379,54 +388,54 @@ const AIChatPage = () => {
               </TabsContent>
   
               <TabsContent value="history" className="md:col-span-3 mt-0">
-                <Card className="p-6 bg-white">
-                  <h2 className="text-xl font-semibold mb-4">{t("chatAnalytics")}</h2>
+                <Card className="p-6 bg-white dark:bg-gray-800 dark:border-gray-700">
+                  <h2 className="text-xl font-semibold mb-4 dark:text-white">{t("chatAnalytics")}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-blue-700">
+                    <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300">
                         {t("totalConversations")}
                       </h3>
-                      <p className="text-2xl font-bold">
+                      <p className="text-2xl font-bold dark:text-white">
                         {chatHistories.length}
                       </p>
                     </div>
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-green-700">
+                    <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-green-700 dark:text-green-300">
                         {t("mostActiveDay")}
                       </h3>
-                      <p className="text-2xl font-bold">{t("tuesday")}</p>
+                      <p className="text-2xl font-bold dark:text-white">{t("tuesday")}</p>
                     </div>
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-purple-700">
+                    <div className="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-purple-700 dark:text-purple-300">
                         {t("commonTopics")}
                       </h3>
-                      <p className="text-lg font-medium">{t("productivityGoals")}</p>
+                      <p className="text-lg font-medium dark:text-white">{t("productivityGoals")}</p>
                     </div>
                   </div>
   
-                  <h3 className="text-lg font-semibold mb-3">
+                  <h3 className="text-lg font-semibold mb-3 dark:text-white">
                     {t("recentInsights")}
                   </h3>
                   <div className="space-y-3">
-                    <div className="border border-gray-200 rounded-lg p-4">
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{t("taskCompletionPattern")}</h4>
-                        <span className="text-xs text-gray-500">
+                        <h4 className="font-medium dark:text-white">{t("taskCompletionPattern")}</h4>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {t("generatedYesterday")}
                         </span>
                       </div>
-                      <p className="text-gray-700">
+                      <p className="text-gray-700 dark:text-gray-300">
                         {t("morningProductivityTip")}
                       </p>
                     </div>
-                    <div className="border border-gray-200 rounded-lg p-4">
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{t("focusTimeAnalysis")}</h4>
-                        <span className="text-xs text-gray-500">
+                        <h4 className="font-medium dark:text-white">{t("focusTimeAnalysis")}</h4>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {t("generated3DaysAgo")}
                         </span>
                       </div>
-                      <p className="text-gray-700">
+                      <p className="text-gray-700 dark:text-gray-300">
                         {t("focusSessionTip")}
                       </p>
                     </div>

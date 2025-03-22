@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/context/ThemeContext";
 
 export type AnimationType = "success" | "error" | "loading" | "idle";
 
@@ -18,6 +19,7 @@ const AuthAnimation = ({
   onComplete = () => {},
   duration = 2000,
 }: AuthAnimationProps) => {
+  const { theme } = useTheme();
   const [visible, setVisible] = useState(type !== "idle");
 
   useEffect(() => {
@@ -40,19 +42,25 @@ const AuthAnimation = ({
     switch (type) {
       case "success":
         return (
-          <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-green-50 rounded-lg">
+          <div className={`flex flex-col items-center justify-center space-y-4 p-6 rounded-lg ${
+            theme === "dark" ? "bg-green-900/30" : "bg-green-50"
+          }`}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
             >
-              <CheckCircle className="w-16 h-16 text-green-500" />
+              <CheckCircle className={`w-16 h-16 ${
+                theme === "dark" ? "text-green-400" : "text-green-500"
+              }`} />
             </motion.div>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-green-700 font-medium text-center"
+              className={`font-medium text-center ${
+                theme === "dark" ? "text-green-300" : "text-green-700"
+              }`}
             >
               {message || "Success! Your request was completed."}
             </motion.p>
@@ -61,19 +69,25 @@ const AuthAnimation = ({
 
       case "error":
         return (
-          <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 rounded-lg">
+          <div className={`flex flex-col items-center justify-center space-y-4 p-6 rounded-lg ${
+            theme === "dark" ? "bg-red-900/30" : "bg-red-50"
+          }`}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
             >
-              <XCircle className="w-16 h-16 text-red-500" />
+              <XCircle className={`w-16 h-16 ${
+                theme === "dark" ? "text-red-400" : "text-red-500"
+              }`} />
             </motion.div>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-red-700 font-medium text-center"
+              className={`font-medium text-center ${
+                theme === "dark" ? "text-red-300" : "text-red-700"
+              }`}
             >
               {message || "Oops! Something went wrong."}
             </motion.p>
@@ -83,7 +97,8 @@ const AuthAnimation = ({
               transition={{ delay: 0.4 }}
             >
               <Button
-                variant="outline"
+                variant={theme === "dark" ? "outline" : "outline"}
+                className={theme === "dark" ? "border-red-500 text-red-400 hover:bg-red-900/20" : ""}
                 onClick={() => {
                   setVisible(false);
                   setTimeout(onComplete, 300);
@@ -97,7 +112,9 @@ const AuthAnimation = ({
 
       case "loading":
         return (
-          <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-blue-50 rounded-lg">
+          <div className={`flex flex-col items-center justify-center space-y-4 p-6 rounded-lg ${
+            theme === "dark" ? "bg-blue-900/30" : "bg-blue-50"
+          }`}>
             <motion.div
               animate={{ rotate: 360 }}
               transition={{
@@ -106,9 +123,13 @@ const AuthAnimation = ({
                 ease: "linear",
               }}
             >
-              <Loader2 className="w-12 h-12 text-blue-500" />
+              <Loader2 className={`w-12 h-12 ${
+                theme === "dark" ? "text-blue-400" : "text-blue-500"
+              }`} />
             </motion.div>
-            <p className="text-blue-700 font-medium text-center">
+            <p className={`font-medium text-center ${
+              theme === "dark" ? "text-blue-300" : "text-blue-700"
+            }`}>
               {message || "Loading, please wait..."}
             </p>
           </div>
@@ -120,7 +141,9 @@ const AuthAnimation = ({
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-white">
+    <div className={`w-full h-full flex items-center justify-center ${
+      theme === "dark" ? "bg-slate-800" : "bg-white"
+    }`}>
       <AnimatePresence>
         {visible && (
           <motion.div

@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useTheme } from "@/context/ThemeContext";
 
 interface SignupFormProps {
   onSuccess?: () => void;
@@ -19,6 +20,7 @@ const SignupForm = ({
 }: SignupFormProps) => {
   const { login } = useAuth();
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -129,11 +131,9 @@ const SignupForm = ({
 
   const handleGoogleSignup = () => {
     setIsLoading(true);
-    // Simulate Google OAuth
-    setTimeout(() => {
-      setIsLoading(false);
-      onSuccess();
-    }, 1500);
+    // Redirect to Google OAuth endpoint
+    const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    window.location.href = `${apiBaseUrl}/auth/google`;
   };
 
   return (
@@ -142,18 +142,30 @@ const SignupForm = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      className="w-full bg-white p-6 rounded-lg shadow-lg"
+      className={`w-full p-6 rounded-lg shadow-lg ${
+        theme === "dark" 
+          ? "bg-slate-800 text-white" 
+          : "bg-white text-gray-900"
+      }`}
     >
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
+        <h2 className={`text-2xl font-bold ${
+          theme === "dark" ? "text-white" : "text-gray-800"
+        }`}>
           {t("createAccount")}
         </h2>
-        <p className="text-gray-600 mt-1">{t("joinToday")}</p>
+        <p className={`mt-1 ${
+          theme === "dark" ? "text-slate-400" : "text-gray-600"
+        }`}>
+          {t("joinToday")}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">{t("email")}</Label>
+          <Label htmlFor="email" className={theme === "dark" ? "text-slate-300" : ""}>
+            {t("email")}
+          </Label>
           <div className="relative">
             <Input
               id="email"
@@ -162,13 +174,16 @@ const SignupForm = ({
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
-              className={`${errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+              className={`${errors.email ? "border-red-500 focus-visible:ring-red-500" : ""} 
+                ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white placeholder:text-slate-400" : ""}`}
             />
             {errors.email && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-red-500 text-sm mt-1 flex items-center gap-1"
+                className={`text-sm mt-1 flex items-center gap-1 ${
+                  theme === "dark" ? "text-red-400" : "text-red-500"
+                }`}
               >
                 <AlertCircle size={14} />
                 <span>{errors.email}</span>
@@ -178,7 +193,9 @@ const SignupForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">{t("password")}</Label>
+          <Label htmlFor="password" className={theme === "dark" ? "text-slate-300" : ""}>
+            {t("password")}
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -187,12 +204,15 @@ const SignupForm = ({
               placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              className={`${errors.password ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+              className={`${errors.password ? "border-red-500 focus-visible:ring-red-500" : ""} 
+                ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white placeholder:text-slate-400" : ""}`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className={`absolute right-3 top-1/2 -translate-y-1/2 ${
+                theme === "dark" ? "text-slate-400 hover:text-slate-300" : "text-gray-500 hover:text-gray-700"
+              }`}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -200,7 +220,9 @@ const SignupForm = ({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-red-500 text-sm mt-1 flex items-center gap-1"
+                className={`text-sm mt-1 flex items-center gap-1 ${
+                  theme === "dark" ? "text-red-400" : "text-red-500"
+                }`}
               >
                 <AlertCircle size={14} />
                 <span>{errors.password}</span>
@@ -210,7 +232,9 @@ const SignupForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
+          <Label htmlFor="confirmPassword" className={theme === "dark" ? "text-slate-300" : ""}>
+            {t("confirmPassword")}
+          </Label>
           <div className="relative">
             <Input
               id="confirmPassword"
@@ -219,12 +243,15 @@ const SignupForm = ({
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`${errors.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+              className={`${errors.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""} 
+                ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white placeholder:text-slate-400" : ""}`}
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className={`absolute right-3 top-1/2 -translate-y-1/2 ${
+                theme === "dark" ? "text-slate-400 hover:text-slate-300" : "text-gray-500 hover:text-gray-700"
+              }`}
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -232,7 +259,9 @@ const SignupForm = ({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-red-500 text-sm mt-1 flex items-center gap-1"
+                className={`text-sm mt-1 flex items-center gap-1 ${
+                  theme === "dark" ? "text-red-400" : "text-red-500"
+                }`}
               >
                 <AlertCircle size={14} />
                 <span>{errors.confirmPassword}</span>
@@ -243,31 +272,13 @@ const SignupForm = ({
 
         <Button
           type="submit"
-          className="w-full py-2 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+          className="w-full py-2 mt-4"
+          variant={theme === "dark" ? "gradient" : "default"}
           disabled={isLoading}
         >
           {isLoading ? (
             <div className="flex items-center justify-center">
-              <svg
-                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
+              <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" />
               <span>{t("creatingAccount")}</span>
             </div>
           ) : (
@@ -279,11 +290,17 @@ const SignupForm = ({
       <div className="mt-6">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
+            <div className={`w-full border-t ${
+              theme === "dark" ? "border-slate-600" : "border-gray-300"
+            }`}></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">
-              Or continue with
+            <span className={`px-2 ${
+              theme === "dark" 
+                ? "bg-slate-800 text-slate-400" 
+                : "bg-white text-gray-500"
+            }`}>
+              {t("orContinueWith")}
             </span>
           </div>
         </div>
@@ -292,7 +309,11 @@ const SignupForm = ({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-center"
+            className={`w-full justify-center ${
+              theme === "dark" 
+                ? "bg-slate-700 text-white border-slate-600 hover:bg-slate-600" 
+                : ""
+            }`}
             onClick={handleGoogleSignup}
             disabled={isLoading}
           >
@@ -329,13 +350,17 @@ const SignupForm = ({
         </div>
       </div>
 
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-          {t("dontHaveAccount")}{" "}
+      <div className={`mt-6 text-center ${
+        theme === "dark" ? "text-slate-400" : ""
+      }`}>
+        <p className="text-sm">
+          {t("alreadyHaveAccount")}{" "}
           <button
             type="button"
             onClick={onSwitch}
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className={`font-medium ${
+              theme === "dark" ? "text-indigo-400 hover:text-indigo-300" : "text-blue-600 hover:text-blue-800"
+            }`}
           >
             {t("signIn")}
           </button>

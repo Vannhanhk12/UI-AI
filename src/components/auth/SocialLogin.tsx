@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
+import { useTheme } from "@/context/ThemeContext";
 
 interface SocialLoginProps {
   onGoogleLogin?: () => void;
@@ -14,13 +15,21 @@ const SocialLogin = ({
   isLoading = false,
   type = "login",
 }: SocialLoginProps) => {
+  const { theme } = useTheme();
+  
   return (
-    <div className="w-full space-y-4 bg-white p-4 rounded-lg">
+    <div className={`w-full space-y-4 p-4 rounded-lg ${
+      theme === "dark" ? "bg-slate-800" : "bg-white"
+    }`}>
       <div className="relative flex items-center justify-center">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-gray-300" />
+          <span className={`w-full border-t ${
+            theme === "dark" ? "border-slate-600" : "border-gray-300"
+          }`} />
         </div>
-        <div className="relative px-4 text-sm text-gray-500 bg-white">
+        <div className={`relative px-4 text-sm ${
+          theme === "dark" ? "bg-slate-800 text-slate-400" : "bg-white text-gray-500"
+        }`}>
           Or {type === "login" ? "sign in" : "sign up"} with
         </div>
       </div>
@@ -32,7 +41,11 @@ const SocialLogin = ({
       >
         <Button
           variant="outline"
-          className="w-full bg-white border-gray-300 hover:bg-gray-50 text-gray-700 font-medium"
+          className={`w-full border-gray-300 font-medium ${
+            theme === "dark" 
+              ? "bg-slate-700 border-slate-600 text-white hover:bg-slate-600" 
+              : "bg-white hover:bg-gray-50 text-gray-700"
+          }`}
           onClick={onGoogleLogin}
           disabled={isLoading}
         >

@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useTheme } from "@/context/ThemeContext";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ const LoginForm = ({
 }: LoginFormProps) => {
   const { login } = useAuth();
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,14 +126,22 @@ const LoginForm = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      className="w-full bg-white p-6 rounded-lg shadow-sm"
+      className={`w-full p-6 rounded-lg shadow-sm ${
+        theme === "dark" 
+          ? "bg-slate-800 text-white" 
+          : "bg-white text-gray-900"
+      }`}
     >
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className={`text-2xl font-bold tracking-tight ${
+            theme === "dark" ? "text-white" : "text-gray-900"
+          }`}>
             {t("welcomeBack")}
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className={`text-sm mt-2 ${
+            theme === "dark" ? "text-slate-400" : "text-muted-foreground"
+          }`}>
             {t("enterCredentials")}
           </p>
         </div>
@@ -143,13 +153,14 @@ const LoginForm = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("email")}</FormLabel>
+                  <FormLabel className={theme === "dark" ? "text-slate-300" : ""}>{t("email")}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="name@example.com"
                       type="email"
                       autoComplete="email"
                       disabled={isLoading}
+                      className={theme === "dark" ? "bg-slate-700 border-slate-600 text-white placeholder:text-slate-400" : ""}
                       {...field}
                     />
                   </FormControl>
@@ -163,7 +174,7 @@ const LoginForm = ({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("password")}</FormLabel>
+                  <FormLabel className={theme === "dark" ? "text-slate-300" : ""}>{t("password")}</FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
@@ -171,6 +182,7 @@ const LoginForm = ({
                         type={showPassword ? "text" : "password"}
                         autoComplete="current-password"
                         disabled={isLoading}
+                        className={theme === "dark" ? "bg-slate-700 border-slate-600 text-white placeholder:text-slate-400" : ""}
                         {...field}
                       />
                     </FormControl>
@@ -178,14 +190,20 @@ const LoginForm = ({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3"
+                      className={`absolute right-0 top-0 h-full px-3 ${
+                        theme === "dark" ? "hover:bg-slate-700" : ""
+                      }`}
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isLoading}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        <EyeOff className={`h-4 w-4 ${
+                          theme === "dark" ? "text-slate-400" : "text-muted-foreground"
+                        }`} />
                       ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <Eye className={`h-4 w-4 ${
+                          theme === "dark" ? "text-slate-400" : "text-muted-foreground"
+                        }`} />
                       )}
                       <span className="sr-only">
                         {showPassword ? "Hide password" : "Show password"}
@@ -196,7 +214,9 @@ const LoginForm = ({
                   <div className="text-sm">
                     <Button
                       variant="link"
-                      className="px-0 font-normal"
+                      className={`px-0 font-normal ${
+                        theme === "dark" ? "text-indigo-400 hover:text-indigo-300" : ""
+                      }`}
                       disabled={isLoading}
                     >
                       {t("forgotPassword")}
@@ -206,7 +226,12 @@ const LoginForm = ({
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full"
+              variant={theme === "dark" ? "gradient" : "default"}
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -221,10 +246,16 @@ const LoginForm = ({
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className={`w-full border-t ${
+              theme === "dark" ? "border-slate-600" : "border-gray-200"
+            }`} />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-muted-foreground">
+            <span className={`px-2 ${
+              theme === "dark" 
+                ? "bg-slate-800 text-slate-400" 
+                : "bg-white text-muted-foreground"
+            }`}>
               {t("orContinueWith")}
             </span>
           </div>
@@ -232,10 +263,14 @@ const LoginForm = ({
 
         <div className="flex flex-col space-y-2">
           <Button
-            variant="outline"
+            variant={theme === "dark" ? "outline" : "outline"}
             type="button"
             disabled={isLoading || googleLoading}
-            className="flex items-center justify-center gap-2"
+            className={`flex items-center justify-center gap-2 ${
+              theme === "dark" 
+                ? "bg-slate-700 text-white border-slate-600 hover:bg-slate-600" 
+                : ""
+            }`}
             onClick={handleGoogleLogin}
           >
             <svg
@@ -274,11 +309,15 @@ const LoginForm = ({
           </Button>
         </div>
 
-        <div className="text-center text-sm">
+        <div className={`text-center text-sm ${
+          theme === "dark" ? "text-slate-400" : ""
+        }`}>
           {t("dontHaveAccount")}{" "}
           <Button
             variant="link"
-            className="px-0 font-normal"
+            className={`px-0 font-normal ${
+              theme === "dark" ? "text-indigo-400 hover:text-indigo-300" : ""
+            }`}
             onClick={onToggleForm}
             disabled={isLoading}
           >

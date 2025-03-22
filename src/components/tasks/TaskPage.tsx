@@ -8,6 +8,8 @@ import {
   FiCheck,
   FiX,
   FiPlusCircle,
+  FiGrid,
+  FiList,
 } from "react-icons/fi";
 import {
   BarChart,
@@ -23,10 +25,14 @@ import {
   fetchTasks,
   startTask,
   completeTask,
+  updateTaskStatus,
+  failTask,
 } from "@/services/taskService";
 import { toast } from "sonner";
 import TaskItem from "./TaskItem";
+import KanbanBoard from "./KanbanBoard";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/context/ThemeContext";
 
 const motivationalSlogans = [
   "Hãy biến mỗi nhiệm vụ thành một bước tiến đến thành công!",
@@ -41,6 +47,8 @@ const motivationalSlogans = [
   "Hãy làm việc thông minh hơn, không chỉ chăm chỉ hơn!",
 ];
 
+type ViewMode = "list" | "kanban";
+
 const TasksPage: React.FC = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -48,12 +56,14 @@ const TasksPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { t } = useTranslation();
+  const { theme } = useTheme();
+  const [viewMode, setViewMode] = useState<ViewMode>("kanban");
 
   // Load tasks from API
   const loadTasks = async () => {
     setIsLoading(true);
     try {
-      const response = await fetchTasks(page, 10);
+      const response = await fetchTasks(page, 50); // Increasing limit for Kanban view
       setTasks(response.tasks);
       setTotalPages(response.totalPages);
     } catch (error) {
@@ -157,10 +167,50 @@ const TasksPage: React.FC = () => {
       }
 
       setChartData(newChartData);
-      toast.success("Task completed successfully!");
+      toast.success(t("taskCompletedSuccess"));
     } catch (error) {
       console.error("Error completing task:", error);
-      toast.error("Failed to complete task");
+      toast.error(t("failedToCompleteTask"));
+    }
+  };
+
+  const handleTaskStatusUpdate = async (taskId: string, newStatus: Task['status']) => {
+    try {
+      let updatedTask;
+      
+      // Use the appropriate API call based on status
+      if (newStatus === 'IN_PROGRESS') {
+        updatedTask = await startTask(taskId);
+      } else if (newStatus === 'COMPLETED') {
+        updatedTask = await completeTask(taskId);
+      } else if (newStatus === 'FAILED') {
+        updatedTask = await failTask(taskId);
+      } else {
+        updatedTask = await updateTaskStatus(taskId, newStatus);
+      }
+
+      // Update local state
+      setTasks(tasks.map((task) => (task.id === taskId ? updatedTask : task)));
+      
+      toast.success(t("taskUpdatedSuccess"));
+      
+      // If status is completed, update chart
+      if (newStatus === 'COMPLETED') {
+        const newChartData = [...chartData];
+        const today = new Date().getDay();
+        const dayIndex = today === 0 ? 6 : today - 1;
+        newChartData[dayIndex].completed += 1;
+        
+        const task = tasks.find(t => t.id === taskId);
+        if (task?.priority === "HIGH") {
+          newChartData[dayIndex].important += 1;
+        }
+        
+        setChartData(newChartData);
+      }
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      toast.error(t("failedToUpdateTask"));
     }
   };
 
@@ -170,7 +220,7 @@ const TasksPage: React.FC = () => {
 
       // Update local state
       setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
-      toast.success("Task started successfully!");
+      toast.success(t("taskStartedSuccess"));
 
       // If the task has an estimated duration, start the timer
       if (updatedTask.estimatedDuration) {
@@ -178,7 +228,7 @@ const TasksPage: React.FC = () => {
       }
     } catch (error) {
       console.error("Error starting task:", error);
-      toast.error("Failed to start task");
+      toast.error(t("failedToStartTask"));
     }
   };
 
@@ -245,10 +295,60 @@ const TasksPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{t("taskManager")}</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{t("taskManager")}</h1>
+          
+          <div className="flex items-center space-x-3">
+            <div className={`flex bg-gray-100 dark:bg-slate-800 rounded-lg p-1 ${
+              theme === 'dark' ? 'shadow-inner shadow-slate-900/50' : ''
+            }`}>
+              <button 
+                onClick={() => setViewMode('list')} 
+                className={`px-3 py-1.5 rounded ${
+                  viewMode === 'list' 
+                    ? theme === 'dark'
+                      ? 'bg-slate-900 text-indigo-300' 
+                      : 'bg-white shadow text-blue-600'
+                    : ''
+                } flex items-center gap-1`}
+              >
+                <FiList />
+                <span className="text-sm">{t("listView")}</span>
+              </button>
+              <button 
+                onClick={() => setViewMode('kanban')} 
+                className={`px-3 py-1.5 rounded ${
+                  viewMode === 'kanban' 
+                    ? theme === 'dark'
+                      ? 'bg-slate-900 text-indigo-300' 
+                      : 'bg-white shadow text-blue-600'
+                    : ''
+                } flex items-center gap-1`}
+              >
+                <FiGrid />
+                <span className="text-sm">{t("kanbanView")}</span>
+              </button>
+            </div>
+            
+            <button
+              onClick={() => navigate("/tasks/new")}
+              className={`${
+                theme === 'dark' 
+                  ? 'bg-indigo-600 hover:bg-indigo-700 dark:button-glow' 
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white px-4 py-2 rounded-md text-sm flex items-center transition-colors`}
+            >
+              <FiPlus className="mr-2" /> {t("addTask")}
+            </button>
+          </div>
+        </div>
   
         <motion.div
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-8"
+          className={`p-6 rounded-xl shadow-lg mb-8 ${
+            theme === 'dark' 
+              ? 'bg-gradient-to-r from-indigo-900/50 to-blue-900/50 text-white' 
+              : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+          }`}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
@@ -260,7 +360,11 @@ const TasksPage: React.FC = () => {
         <AnimatePresence>
           {timer.active && (
             <motion.div
-              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 mb-8 rounded-xl shadow-lg"
+              className={`p-6 mb-8 rounded-xl shadow-lg ${
+                theme === 'dark' 
+                  ? 'bg-gradient-to-r from-indigo-900 to-blue-900 text-white' 
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white'
+              }`}
               initial={{ opacity: 0, scale: 0.9, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: -20 }}
@@ -343,76 +447,58 @@ const TasksPage: React.FC = () => {
           )}
         </AnimatePresence>
   
-        <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">{t("tasks")}</h2>
-            <button
-              onClick={() => navigate("/tasks/new")}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center transition-colors"
-            >
-              <FiPlus className="mr-2" /> {t("addTask")}
-            </button>
-          </div>
-  
+        <div className={`p-6 rounded-xl ${
+          theme === 'dark' ? 'bg-slate-900/80 shadow-lg' : 'bg-white shadow-sm'
+        } mb-8`}>
           {isLoading ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${
+                theme === 'dark' ? 'border-indigo-400' : 'border-blue-500'
+              }`}></div>
             </div>
           ) : tasks.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <p>{t("noTasksFound")}</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{
-                    scale: 1.01,
-                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
-                  }}
-                >
-                  <TaskItem
-                    task={task}
-                    onToggle={handleCompleteTask}
-                    onStart={handleStartTask}
-                  />
-                </motion.div>
-              ))}
-  
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center mt-6 space-x-2">
-                  <button
-                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={page === 1}
-                    className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
-                  >
-                    {t("previous")}
-                  </button>
-                  <span className="px-3 py-1">
-                    {t("page")} {page} {t("of")} {totalPages}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={page === totalPages}
-                    className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
-                  >
-                    {t("next")}
-                  </button>
+            <>
+              {viewMode === 'list' ? (
+                <div className="space-y-3">
+                  {tasks.map((task) => (
+                    <motion.div
+                      key={task.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      whileHover={{
+                        scale: 1.01,
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
+                      }}
+                    >
+                      <TaskItem
+                        task={task}
+                        onToggle={handleCompleteTask}
+                        onStart={handleStartTask}
+                      />
+                    </motion.div>
+                  ))}
                 </div>
+              ) : (
+                <KanbanBoard 
+                  tasks={tasks} 
+                  onTaskUpdate={handleTaskStatusUpdate}
+                  onToggle={handleCompleteTask}
+                  onStart={handleStartTask}
+                />
               )}
-            </div>
+            </>
           )}
         </div>
   
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">
+        <div className={`p-6 rounded-xl ${
+          theme === 'dark' ? 'bg-slate-900/80 shadow-lg' : 'bg-white shadow-sm'
+        }`}>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
             {t("weeklyStats")}
           </h2>
           <div className="h-80">
@@ -428,21 +514,27 @@ const TasksPage: React.FC = () => {
                 <Bar
                   dataKey="important"
                   name={t("importantTasks")}
-                  fill="#ef4444"
+                  fill={theme === 'dark' ? "#ef4444" : "#ef4444"}
                 />
                 <Bar
                   dataKey="completed"
                   name={t("completedTasks")}
-                  fill="#3b82f6"
+                  fill={theme === 'dark' ? "#818cf8" : "#3b82f6"}
                 />
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-medium text-blue-800 mb-2">
+          <div className={`mt-4 p-4 rounded-lg ${
+            theme === 'dark' ? 'bg-indigo-900/20' : 'bg-blue-50'
+          }`}>
+            <h3 className={`font-medium mb-2 ${
+              theme === 'dark' ? 'text-indigo-300' : 'text-blue-800'
+            }`}>
               {t("productivityTip")}:
             </h3>
-            <p className="text-sm text-blue-700">
+            <p className={`text-sm ${
+              theme === 'dark' ? 'text-indigo-200' : 'text-blue-700'
+            }`}>
               {t("productivityTipText")}
             </p>
           </div>
@@ -459,7 +551,9 @@ const TasksPage: React.FC = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-xl p-6 w-full max-w-md"
+              className={`rounded-xl p-6 w-full max-w-md ${
+                theme === 'dark' ? 'bg-slate-900' : 'bg-white'
+              }`}
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
@@ -470,7 +564,11 @@ const TasksPage: React.FC = () => {
                   <button
                     key={minutes}
                     onClick={() => addTime(minutes)}
-                    className="bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"
+                    className={`py-3 px-4 rounded-lg font-medium transition-colors ${
+                      theme === 'dark' 
+                        ? 'bg-indigo-900/30 hover:bg-indigo-900/50 text-indigo-300' 
+                        : 'bg-blue-100 hover:bg-blue-200 text-blue-800'
+                    }`}
                   >
                     {minutes} {t("minutes")}
                   </button>
@@ -479,7 +577,7 @@ const TasksPage: React.FC = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setShowAddTimeModal(false)}
-                  className="text-gray-600 hover:text-gray-800"
+                  className={theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'}
                 >
                   {t("cancel")}
                 </button>

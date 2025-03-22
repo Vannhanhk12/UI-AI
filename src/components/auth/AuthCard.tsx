@@ -7,6 +7,7 @@ import SignupForm from "./SignupForm";
 import AuthAnimation from "./AuthAnimation";
 import SocialLogin from "./SocialLogin";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/context/ThemeContext";
 
 interface AuthCardProps {
   defaultTab?: "login" | "signup";
@@ -20,6 +21,7 @@ const AuthCard = ({
   onAuthSuccess = () => console.log("Auth success"),
 }: AuthCardProps) => {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<"login" | "signup">(defaultTab);
   const [animationState, setAnimationState] = useState<{
     type: AnimationType;
@@ -77,16 +79,24 @@ const AuthCard = ({
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className={`flex items-center justify-center min-h-screen w-full p-4 ${
+      theme === "dark" 
+        ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" 
+        : "bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-50"
+    }`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <Card className="overflow-hidden border-none shadow-xl bg-white">
+        <Card className={`overflow-hidden border-none shadow-xl ${
+          theme === "dark" ? "bg-slate-800" : "bg-white"
+        }`}>
           {animationState.type !== "idle" ? (
-            <div className="p-6 h-[500px] flex items-center justify-center">
+            <div className={`p-6 h-[500px] flex items-center justify-center ${
+              theme === "dark" ? "bg-slate-800" : "bg-white"
+            }`}>
               <AuthAnimation
                 type={animationState.type}
                 message={animationState.message}
@@ -95,7 +105,11 @@ const AuthCard = ({
             </div>
           ) : (
             <CardContent className="p-0">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
+              <div className={`p-6 text-white text-center ${
+                theme === "dark"
+                  ? "bg-gradient-to-r from-indigo-800 to-purple-800"
+                  : "bg-gradient-to-r from-blue-600 to-indigo-600"
+              }`}>
                 <motion.h1
                   className="text-2xl font-bold mb-2"
                   initial={{ opacity: 0 }}
@@ -105,7 +119,7 @@ const AuthCard = ({
                   {t("appTitle")}
                 </motion.h1>
                 <motion.p
-                  className="text-blue-100"
+                  className={theme === "dark" ? "text-indigo-200" : "text-blue-100"}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -125,11 +139,21 @@ const AuthCard = ({
                 className="w-full"
               >
                 <div className="px-6 pt-6">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="login" disabled={isLoading}>
+                  <TabsList className={`grid w-full grid-cols-2 ${
+                    theme === "dark" ? "bg-slate-700" : ""
+                  }`}>
+                    <TabsTrigger 
+                      value="login" 
+                      disabled={isLoading}
+                      className={theme === "dark" ? "data-[state=active]:bg-slate-900 data-[state=active]:text-white" : ""}
+                    >
                       {t("login")}
                     </TabsTrigger>
-                    <TabsTrigger value="signup" disabled={isLoading}>
+                    <TabsTrigger 
+                      value="signup" 
+                      disabled={isLoading}
+                      className={theme === "dark" ? "data-[state=active]:bg-slate-900 data-[state=active]:text-white" : ""}
+                    >
                       {t("signUp")}
                     </TabsTrigger>
                   </TabsList>
@@ -166,7 +190,9 @@ const AuthCard = ({
   
         {/* Decorative elements */}
         <motion.div
-          className="absolute -z-10 w-72 h-72 bg-blue-500 rounded-full opacity-10 blur-3xl"
+          className={`absolute -z-10 w-72 h-72 rounded-full opacity-10 blur-3xl ${
+            theme === "dark" ? "bg-indigo-700" : "bg-blue-500"
+          }`}
           style={{ top: "10%", right: "15%" }}
           animate={{
             scale: [1, 1.1, 1],
@@ -179,7 +205,9 @@ const AuthCard = ({
           }}
         />
         <motion.div
-          className="absolute -z-10 w-96 h-96 bg-indigo-600 rounded-full opacity-10 blur-3xl"
+          className={`absolute -z-10 w-96 h-96 rounded-full opacity-10 blur-3xl ${
+            theme === "dark" ? "bg-purple-800" : "bg-indigo-600"
+          }`}
           style={{ bottom: "10%", left: "10%" }}
           animate={{
             scale: [1, 1.2, 1],

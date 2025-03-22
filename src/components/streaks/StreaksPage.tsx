@@ -49,7 +49,7 @@ interface StreakDay {
 
 const StreaksPage = () => {
   const [activeTab, setActiveTab] = useState("active");
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   // Mock data
   const streaks: Streak[] = [
@@ -166,20 +166,20 @@ const StreaksPage = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 pt-16">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">{t("streakTracker")}</h1>
-            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 mt-4 md:mt-0">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("streakTracker")}</h1>
+            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 mt-4 md:mt-0">
               <Plus size={16} />
               {t("createNewStreak")}
             </Button>
           </div>
         </div>
       </header>
-  
+
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats cards */}
@@ -189,22 +189,20 @@ const StreaksPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("activeStreaks")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-orange-100 p-2">
-                    <Flame className="h-6 w-6 text-orange-600" />
+                  <div className="mr-4 rounded-full bg-orange-100 dark:bg-orange-900 p-2">
+                    <Flame className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">
-                      {totalActiveStreaks}
-                    </div>
-                    <p className="text-xs text-orange-600 flex items-center">
+                    <div className="text-3xl font-bold dark:text-white">{totalActiveStreaks}</div>
+                    <p className="text-xs text-orange-600 dark:text-orange-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {Math.round((totalActiveStreaks / streaks.length) * 100)}%
                       {t("activeRate")}
@@ -214,28 +212,28 @@ const StreaksPage = () => {
               </CardContent>
             </Card>
           </motion.div>
-  
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("longestCurrentStreak")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-red-100 p-2">
-                    <Trophy className="h-6 w-6 text-red-600" />
+                  <div className="mr-4 rounded-full bg-red-100 dark:bg-red-900 p-2">
+                    <Trophy className="h-6 w-6 text-red-600 dark:text-red-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">
+                    <div className="text-3xl font-bold dark:text-white">
                       {longestCurrentStreak} {t("days")}
                     </div>
-                    <p className="text-xs text-red-600 flex items-center">
+                    <p className="text-xs text-red-600 dark:text-red-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {t("dailyCodingPractice")}
                     </p>
@@ -244,28 +242,28 @@ const StreaksPage = () => {
               </CardContent>
             </Card>
           </motion.div>
-  
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("allTimeRecord")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-purple-100 p-2">
-                    <Calendar className="h-6 w-6 text-purple-600" />
+                  <div className="mr-4 rounded-full bg-purple-100 dark:bg-purple-900 p-2">
+                    <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">
+                    <div className="text-3xl font-bold dark:text-white">
                       {streakWithLongestHistory.longestStreak} {t("days")}
                     </div>
-                    <p className="text-xs text-purple-600 flex items-center">
+                    <p className="text-xs text-purple-600 dark:text-purple-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {streakWithLongestHistory.title}
                     </p>
@@ -274,26 +272,26 @@ const StreaksPage = () => {
               </CardContent>
             </Card>
           </motion.div>
-  
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("totalCompletions")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-green-100 p-2">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  <div className="mr-4 rounded-full bg-green-100 dark:bg-green-900 p-2">
+                    <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">{totalCompletions}</div>
-                    <p className="text-xs text-green-600 flex items-center">
+                    <div className="text-3xl font-bold dark:text-white">{totalCompletions}</div>
+                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {t("acrossAllHabits")}
                     </p>
@@ -303,7 +301,7 @@ const StreaksPage = () => {
             </Card>
           </motion.div>
         </div>
-  
+
         {/* Streaks and Today's Tasks */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Streaks List */}
@@ -313,127 +311,139 @@ const StreaksPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <Card className="border-none shadow-md h-full">
+            <Card className="border-none shadow-md h-full dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>{t("myStreaks")}</CardTitle>
-                  <Tabs defaultValue="active" onValueChange={setActiveTab}>
-                    <TabsList>
-                      <TabsTrigger value="active">{t("active")}</TabsTrigger>
-                      <TabsTrigger value="broken">{t("broken")}</TabsTrigger>
-                      <TabsTrigger value="all">{t("all")}</TabsTrigger>
+                  <CardTitle className="dark:text-white">{t("myStreaks")}</CardTitle>
+                  <Tabs defaultValue="active" onValueChange={setActiveTab} className="mb-8">
+                    <TabsList className="grid w-full md:w-auto grid-cols-3 mb-6 dark:bg-gray-700">
+                      <TabsTrigger value="active" className="dark:text-white dark:data-[state=active]:bg-gray-600">{t("active")}</TabsTrigger>
+                      <TabsTrigger value="broken" className="dark:text-white dark:data-[state=active]:bg-gray-600">{t("broken")}</TabsTrigger>
+                      <TabsTrigger value="all" className="dark:text-white dark:data-[state=active]:bg-gray-600">{t("all")}</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
-                <CardDescription>
+                <CardDescription className="dark:text-gray-300">
                   {t("trackDailyHabits")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {filteredStreaks.map((streak) => (
-                    <div
+                    <Card
                       key={streak.id}
-                      className="bg-white rounded-lg border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+                      className="border-none shadow-md dark:bg-gray-800 dark:shadow-gray-700"
                     >
-                      <div className="p-4">
+                      <CardHeader>
                         <div className="flex justify-between items-start">
-                          <div className="flex items-start">
-                            <div
-                              className={`rounded-full p-2 mr-3 ${streak.currentStreak > 0 ? "bg-orange-100" : "bg-gray-100"}`}
-                            >
-                              <Flame
-                                className={`h-5 w-5 ${streak.currentStreak > 0 ? "text-orange-600" : "text-gray-400"}`}
-                              />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-lg">
-                                {streak.title}
-                              </h3>
-                              <p className="text-sm text-gray-500 mt-1">
-                                {streak.description}
-                              </p>
-                            </div>
+                          <div>
+                            <CardTitle className="dark:text-white">{streak.title}</CardTitle>
+                            <CardDescription className="dark:text-gray-300">
+                              {streak.description}
+                            </CardDescription>
                           </div>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button
                                 variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0"
+                                size="icon"
+                                className="h-8 w-8 text-gray-500 dark:text-gray-400"
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>{t("markComplete")}</DropdownMenuItem>
-                              <DropdownMenuItem>{t("editStreak")}</DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-600">
-                                {t("delete")}
+                            <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
+                              <DropdownMenuItem className="dark:text-white dark:hover:bg-gray-700">
+                                {t("editStreak")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="dark:text-white dark:hover:bg-gray-700">
+                                {t("markComplete")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="dark:text-white dark:hover:bg-gray-700">
+                                {t("deleteStreak")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-  
-                        <div className="flex items-center mt-4 text-sm text-gray-500">
-                          <span className="flex items-center mr-4">
-                            <Flame className="h-4 w-4 mr-1" />
-                            {t("current")}: {streak.currentStreak} {t("days")}
-                          </span>
-                          <span className="flex items-center mr-4">
-                            <Trophy className="h-4 w-4 mr-1" />
-                            {t("best")}: {streak.longestStreak} {t("days")}
-                          </span>
-                          <span className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            {streak.category}
-                          </span>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <div className="rounded-full bg-orange-100 dark:bg-orange-900 p-2 mr-3">
+                              <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500 dark:text-gray-300">{t("currentStreak")}</p>
+                              <h3 className="text-xl font-bold dark:text-white">
+                                {streak.currentStreak} {t("days")}
+                              </h3>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500 dark:text-gray-300">{t("longest")}</p>
+                            <h3 className="text-xl font-bold dark:text-white">
+                              {streak.longestStreak} {t("days")}
+                            </h3>
+                          </div>
                         </div>
-  
-                        <div className="mt-4">
-                          <h4 className="text-sm font-medium mb-2">
-                            {t("last10Days")}
-                          </h4>
-                          <div className="flex space-x-1">
-                            {streak.history.slice(-10).map((day, index) => (
+
+                        <div className="space-y-2">
+                          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                            {t("lastMonthActivity")}
+                          </h3>
+                          <div className="flex flex-wrap gap-1">
+                            {streak.history.map((day, index) => (
                               <div
                                 key={index}
-                                className={`h-6 w-6 rounded-sm flex items-center justify-center text-xs ${day.completed ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}
-                                title={`${day.date}: ${day.completed ? t("completed") : t("missed")}`}
-                              >
-                                {day.completed ? "✓" : "×"}
-                              </div>
+                                className={`w-6 h-6 rounded-sm ${
+                                  day.completed
+                                    ? "bg-green-500 dark:bg-green-600"
+                                    : "bg-gray-200 dark:bg-gray-600"
+                                }`}
+                                title={`${day.date}: ${
+                                  day.completed ? t("completed") : t("missed")
+                                }`}
+                              />
                             ))}
                           </div>
                         </div>
-  
-                        <div className="mt-4 flex justify-between items-center">
-                          <span className="text-sm text-gray-500">
-                            {streak.totalCompletions} {t("totalCompletionsCount")}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className={`${streak.history[streak.history.length - 1].completed ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"}`}
-                            disabled={
-                              streak.history[streak.history.length - 1]
-                                .completed
-                            }
-                          >
-                            {streak.history[streak.history.length - 1].completed
-                              ? t("completedToday")
-                              : t("markComplete")}
-                          </Button>
+
+                        <div className="flex justify-between text-sm">
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-300">{t("category")}: </span>
+                            <span className="font-medium dark:text-white">{streak.category}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-300">{t("completed")}: </span>
+                            <span className="font-medium dark:text-white">{streak.totalCompletions} {t("times")}</span>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      </CardContent>
+                      <CardFooter className="border-t dark:border-gray-700 pt-4 flex justify-between">
+                        <Button
+                          variant="outline"
+                          className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+                        >
+                          {t("viewDetails")}
+                        </Button>
+                        {streak.currentStreak === 0 ? (
+                          <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
+                            {t("restart")}
+                          </Button>
+                        ) : (
+                          <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
+                            {t("markComplete")}
+                          </Button>
+                        )}
+                      </CardFooter>
+                    </Card>
                   ))}
                 </div>
               </CardContent>
-              <CardFooter className="border-t pt-4 flex justify-center">
+              <CardFooter className="border-t dark:border-gray-700 pt-4 flex justify-center">
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto flex items-center gap-2"
+                  className="w-full sm:w-auto flex items-center gap-2 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
                 >
                   <Plus size={16} />
                   {t("addNewStreak")}
@@ -441,61 +451,63 @@ const StreaksPage = () => {
               </CardFooter>
             </Card>
           </motion.div>
-  
+
           {/* Today's Streaks */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <Card className="border-none shadow-md h-full">
+            <Card className="border-none shadow-md h-full dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader>
-                <CardTitle>{t("todaysHabits")}</CardTitle>
-                <CardDescription>
-                  {t("completeTasksToMaintain")}
+                <CardTitle className="dark:text-white">{t("todayStreaks")}</CardTitle>
+                <CardDescription className="dark:text-gray-300">
+                  {t("todayStreaksDesc")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {todayStreaks.map((streak) => (
                     <div
                       key={streak.id}
-                      className="p-3 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow"
+                      className="flex items-center justify-between p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div
-                            className={`h-8 w-8 rounded-full mr-3 flex items-center justify-center ${streak.completed ? "bg-green-100" : "bg-gray-100"}`}
-                          >
-                            {streak.completed ? (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            ) : (
-                              <Clock className="h-5 w-5 text-gray-400" />
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{streak.title}</h3>
-                            <p className="text-xs text-gray-500">
-                              {streak.category}
-                            </p>
-                          </div>
+                      <div className="flex items-center">
+                        <div className={`mr-4 rounded-full p-2 ${
+                          streak.completed
+                            ? "bg-green-100 dark:bg-green-900"
+                            : "bg-gray-100 dark:bg-gray-700"
+                        }`}>
+                          {streak.completed ? (
+                            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <Clock className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                          )}
                         </div>
-                        {!streak.completed && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
-                          >
-                            {t("complete")}
-                          </Button>
-                        )}
+                        <div>
+                          <h3 className="font-medium dark:text-white">{streak.title}</h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-300">
+                            {streak.category} • {streak.completed ? t("completed") : t("notCompleted")}
+                          </p>
+                        </div>
                       </div>
+                      <Button
+                        variant={streak.completed ? "ghost" : "outline"}
+                        size="sm"
+                        className={
+                          streak.completed
+                            ? "text-green-600 dark:text-green-400 hover:text-green-700"
+                            : "dark:border-gray-600 dark:text-white dark:hover:bg-gray-600"
+                        }
+                      >
+                        {streak.completed ? t("completed") : t("markDone")}
+                      </Button>
                     </div>
                   ))}
                 </div>
               </CardContent>
-              <CardFooter className="border-t pt-4">
-                <div className="w-full text-center text-sm text-gray-500">
+              <CardFooter className="border-t dark:border-gray-700 pt-4">
+                <div className="w-full text-center text-sm text-gray-500 dark:text-gray-300">
                   <div className="font-medium mb-1">{t("streakScience")}</div>
                   <p>
                     {t("maintainingStreak66Days")}
@@ -505,7 +517,7 @@ const StreaksPage = () => {
             </Card>
           </motion.div>
         </div>
-  
+
         {/* Motivation Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -513,26 +525,26 @@ const StreaksPage = () => {
           transition={{ duration: 0.4, delay: 0.3 }}
           className="mb-6"
         >
-          <Card className="border-none shadow-md bg-gradient-to-r from-orange-500 to-red-500 text-white">
+          <Card className="border-none shadow-md bg-gradient-to-r from-orange-500 to-red-500 text-white dark:bg-gray-800 dark:text-white">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="col-span-2">
-                  <h2 className="text-2xl font-bold mb-2">
+                  <h2 className="text-2xl font-bold mb-2 dark:text-white">
                     {t("scienceOfHabitFormation")}
                   </h2>
-                  <p className="mb-4">
+                  <p className="mb-4 dark:text-gray-300">
                     {t("habitFormationDesc")}
                   </p>
                   <Button
                     variant="secondary"
-                    className="bg-white text-orange-600 hover:bg-gray-100"
+                    className="bg-white dark:bg-gray-700 text-orange-600 dark:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   >
                     {t("learnMoreAboutHabitScience")}
                   </Button>
                 </div>
-                <div className="flex flex-col justify-center items-center bg-white/10 rounded-lg p-4">
-                  <div className="text-4xl font-bold mb-2">21x</div>
-                  <p className="text-center text-sm">
+                <div className="flex flex-col justify-center items-center bg-white/10 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="text-4xl font-bold mb-2 dark:text-white">21x</div>
+                  <p className="text-center text-sm dark:text-gray-300">
                     {t("visualStreakTrackingBenefit")}
                   </p>
                 </div>

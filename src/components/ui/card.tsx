@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { gradient?: boolean }
+>(({ className, gradient = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      "rounded-xl border bg-card text-card-foreground shadow-sm transition-all duration-200",
+      "dark:shadow-md dark:shadow-slate-900/20",
+      gradient && "dark:border-slate-800 dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900/90 dark:gradient-border",
       className
     )}
     {...props}
@@ -35,7 +37,11 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn(
+      "font-semibold leading-none tracking-tight",
+      "dark:text-slate-200 dark:group-hover:heading-glow",
+      className
+    )}
     {...props}
   />
 ))

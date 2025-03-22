@@ -236,13 +236,13 @@ const GoalsPage = () => {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 pt-16">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">{t("goalsTracker")}</h1>
-            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 mt-4 md:mt-0">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("goalsTracker")}</h1>
+            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 mt-4 md:mt-0">
               <Plus size={16} />
               {t("createNewGoal")}
             </Button>
@@ -259,20 +259,20 @@ const GoalsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("totalGoals")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-purple-100 p-2">
-                    <Target className="h-6 w-6 text-purple-600" />
+                  <div className="mr-4 rounded-full bg-purple-100 dark:bg-purple-900 p-2">
+                    <Target className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">{goals.length}</div>
-                    <p className="text-xs text-purple-600 flex items-center">
+                    <div className="text-3xl font-bold dark:text-white">{goals.length}</div>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       2 {t("newThisMonth")}
                     </p>
@@ -287,20 +287,20 @@ const GoalsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("completedGoals")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-green-100 p-2">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  <div className="mr-4 rounded-full bg-green-100 dark:bg-green-900 p-2">
+                    <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">{completedGoals}</div>
-                    <p className="text-xs text-green-600 flex items-center">
+                    <div className="text-3xl font-bold dark:text-white">{completedGoals}</div>
+                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {Math.round((completedGoals / goals.length) * 100)}%
                       {t("completionRate")}
@@ -316,20 +316,20 @@ const GoalsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("inProgress")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-blue-100 p-2">
-                    <Clock className="h-6 w-6 text-blue-600" />
+                  <div className="mr-4 rounded-full bg-blue-100 dark:bg-blue-900 p-2">
+                    <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold">{inProgressGoals}</div>
-                    <p className="text-xs text-blue-600 flex items-center">
+                    <div className="text-3xl font-bold dark:text-white">{inProgressGoals}</div>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1" />
                       {Math.round((inProgressGoals / goals.length) * 100)}% {t("ofTotalGoals")}
                     </p>
@@ -344,34 +344,26 @@ const GoalsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
           >
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-none shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-300">
                   {t("milestoneProgress")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <div className="mr-4 rounded-full bg-amber-100 p-2">
-                    <Target className="h-6 w-6 text-amber-600" />
+                  <div className="mr-4 rounded-full bg-amber-100 dark:bg-amber-900 p-2">
+                    <Target className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <div className="w-full">
-                    <div className="flex justify-between mb-1">
-                      <div className="text-3xl font-bold">
-                        {completedMilestones}/{totalMilestones}
-                      </div>
-                      <span className="text-xs text-amber-600 flex items-center">
-                        <ArrowUpRight className="h-3 w-3 mr-1" />
-                        {Math.round(
-                          (completedMilestones / totalMilestones) * 100,
-                        )}
-                        %
-                      </span>
+                  <div>
+                    <div className="text-3xl font-bold dark:text-white">
+                      {completedMilestones}/{totalMilestones}
                     </div>
-                    <Progress
-                      value={(completedMilestones / totalMilestones) * 100}
-                      className="h-2"
-                    />
+                    <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center">
+                      <ArrowUpRight className="h-3 w-3 mr-1" />
+                      {Math.round((completedMilestones / totalMilestones) * 100)}%
+                      {t("complete")}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -388,19 +380,25 @@ const GoalsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <Card className="border-none shadow-md h-full">
+            <Card className="border-none shadow-md dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>{t("myGoals")}</CardTitle>
+                  <CardTitle className="dark:text-white">{t("myGoals")}</CardTitle>
                   <Tabs defaultValue="active" onValueChange={setActiveTab}>
-                    <TabsList>
-                      <TabsTrigger value="active">{t("active")}</TabsTrigger>
-                      <TabsTrigger value="completed">{t("completed")}</TabsTrigger>
-                      <TabsTrigger value="all">{t("all")}</TabsTrigger>
+                    <TabsList className="grid w-full md:w-auto grid-cols-3 mb-6 dark:bg-gray-700">
+                      <TabsTrigger value="active" className="dark:text-white dark:hover:bg-gray-700">
+                        {t("active")}
+                      </TabsTrigger>
+                      <TabsTrigger value="completed" className="dark:text-white dark:hover:bg-gray-700">
+                        {t("completed")}
+                      </TabsTrigger>
+                      <TabsTrigger value="all" className="dark:text-white dark:hover:bg-gray-700">
+                        {t("all")}
+                      </TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
-                <CardDescription>
+                <CardDescription className="dark:text-gray-300">
                   {t("trackYourProgress")}
                 </CardDescription>
               </CardHeader>
@@ -409,15 +407,15 @@ const GoalsPage = () => {
                   {filteredGoals.map((goal) => (
                     <div
                       key={goal.id}
-                      className="bg-white rounded-lg border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow"
                     >
                       <div className="p-4">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="font-semibold text-lg">
+                            <h3 className="font-semibold text-lg dark:text-white">
                               {goal.title}
                             </h3>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
                               {goal.description}
                             </p>
                           </div>
@@ -426,22 +424,26 @@ const GoalsPage = () => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 w-8 p-0"
+                                className="h-8 w-8 text-gray-500 dark:text-gray-400"
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>{t("editGoal")}</DropdownMenuItem>
-                              <DropdownMenuItem>{t("addMilestone")}</DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-600">
-                                {t("delete")}
+                            <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
+                              <DropdownMenuItem className="dark:text-white dark:hover:bg-gray-700">
+                                {t("editGoal")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="dark:text-white dark:hover:bg-gray-700">
+                                {t("addMilestone")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="dark:text-white dark:hover:bg-gray-700">
+                                {t("deleteGoal")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
   
-                        <div className="flex items-center mt-4 text-sm text-gray-500">
+                        <div className="flex items-center mt-4 text-sm text-gray-500 dark:text-gray-300">
                           <span className="flex items-center mr-4">
                             <Calendar className="h-4 w-4 mr-1" />
                             {t("due")}: {new Date(goal.deadline).toLocaleDateString()}
@@ -457,7 +459,7 @@ const GoalsPage = () => {
                             <span>{t("progress")}</span>
                             <span>{goal.progress}%</span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div
                               className="h-2 rounded-full"
                               style={{
@@ -474,7 +476,7 @@ const GoalsPage = () => {
                         </div>
   
                         <div className="mt-4">
-                          <h4 className="text-sm font-medium mb-2">
+                          <h4 className="text-sm font-medium mb-2 dark:text-white">
                             {t("recentMilestones")}
                           </h4>
                           <div className="space-y-2">
@@ -485,26 +487,28 @@ const GoalsPage = () => {
                               >
                                 <div className="flex items-center">
                                   <div
-                                    className={`h-4 w-4 rounded-full mr-2 flex items-center justify-center ${milestone.completed ? "bg-green-100" : "bg-gray-100"}`}
+                                    className={`h-4 w-4 rounded-full mr-2 flex items-center justify-center ${
+                                      milestone.completed
+                                        ? "bg-green-100 dark:bg-green-900"
+                                        : "bg-gray-100 dark:bg-gray-700"
+                                    }`}
                                   >
                                     {milestone.completed && (
-                                      <CheckCircle className="h-3 w-3 text-green-600" />
+                                      <CheckCircle className="h-3 w-3 text-green-600 dark:text-green-400" />
                                     )}
                                   </div>
                                   <span
                                     className={
                                       milestone.completed
-                                        ? "line-through text-gray-400"
+                                        ? "line-through text-gray-400 dark:text-gray-500"
                                         : ""
                                     }
                                   >
                                     {milestone.title}
                                   </span>
                                 </div>
-                                <span className="text-xs text-gray-500">
-                                  {new Date(
-                                    milestone.dueDate,
-                                  ).toLocaleDateString()}
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  {new Date(milestone.dueDate).toLocaleDateString()}
                                 </span>
                               </div>
                             ))}
@@ -515,7 +519,7 @@ const GoalsPage = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="mt-2 text-blue-600 hover:text-blue-800 p-0 h-auto"
+                            className="mt-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 p-0 h-auto"
                           >
                             {t("viewAllMilestones", { count: goal.milestones.length })}
                             <ChevronRight className="h-4 w-4 ml-1" />
@@ -526,10 +530,10 @@ const GoalsPage = () => {
                   ))}
                 </div>
               </CardContent>
-              <CardFooter className="border-t pt-4 flex justify-center">
+              <CardFooter className="border-t dark:border-gray-700 pt-4 flex justify-center">
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto flex items-center gap-2"
+                  className="w-full sm:w-auto flex items-center gap-2 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
                 >
                   <Plus size={16} />
                   {t("addNewGoal")}
@@ -544,10 +548,10 @@ const GoalsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <Card className="border-none shadow-md h-full">
+            <Card className="border-none shadow-md dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader>
-                <CardTitle>{t("upcomingMilestones")}</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">{t("upcomingMilestones")}</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   {t("nextSteps")}
                 </CardDescription>
               </CardHeader>
@@ -556,25 +560,37 @@ const GoalsPage = () => {
                   {upcomingMilestones.map((milestone) => (
                     <div
                       key={milestone.id}
-                      className="p-3 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow"
+                      className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow"
                     >
-                      <h3 className="font-medium">{milestone.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {t("partOf")}: {milestone.goalTitle}
-                      </p>
-                      <div className="flex items-center mt-2 text-sm">
-                        <Calendar className="h-4 w-4 mr-1 text-gray-400" />
-                        <span className="text-gray-500">
-                          {t("due")}:{" "}
-                          {new Date(milestone.dueDate).toLocaleDateString()}
-                        </span>
+                      <div className="flex items-center">
+                        <div className="mr-4 rounded-full bg-blue-100 dark:bg-blue-900 p-2">
+                          <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium dark:text-white">
+                            {t(milestone.title.toLowerCase(), milestone.title)}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-300">
+                            {t("for")} {milestone.goalTitle.length > 30
+                              ? milestone.goalTitle.substring(0, 30) + "..."
+                              : milestone.goalTitle}{" "}
+                            • {new Date(milestone.dueDate).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-gray-500 dark:text-gray-400"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
               </CardContent>
-              <CardFooter className="border-t pt-4">
-                <div className="w-full text-center text-sm text-gray-500">
+              <CardFooter className="border-t dark:border-gray-700 pt-4">
+                <div className="w-full text-center text-sm text-gray-500 dark:text-gray-400">
                   {t("milestonesCompletionTip")}
                 </div>
               </CardFooter>
@@ -589,7 +605,7 @@ const GoalsPage = () => {
           transition={{ duration: 0.4, delay: 0.3 }}
           className="mb-6"
         >
-          <Card className="border-none shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <Card className="border-none shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-700 text-white">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="col-span-2">
@@ -601,12 +617,12 @@ const GoalsPage = () => {
                   </p>
                   <Button
                     variant="secondary"
-                    className="bg-white text-blue-600 hover:bg-gray-100"
+                    className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     {t("learnMoreAboutGoalScience")}
                   </Button>
                 </div>
-                <div className="flex flex-col justify-center items-center bg-white/10 rounded-lg p-4">
+                <div className="flex flex-col justify-center items-center bg-white/10 dark:bg-gray-700/10 rounded-lg p-4">
                   <div className="text-4xl font-bold mb-2">42%</div>
                   <p className="text-center text-sm">
                     {t("higherSuccessRate")}

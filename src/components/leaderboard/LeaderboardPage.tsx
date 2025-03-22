@@ -250,12 +250,12 @@ const LeaderboardPage = () => {
     if (change === "same") return null;
 
     return change === "up" ? (
-      <span className="flex items-center text-green-600 text-xs">
+      <span className="flex items-center text-green-600 dark:text-green-400 text-xs">
         <ChevronUp className="h-3 w-3" />
         {amount}
       </span>
     ) : (
-      <span className="flex items-center text-red-600 text-xs">
+      <span className="flex items-center text-red-600 dark:text-red-400 text-xs">
         <ChevronDown className="h-3 w-3" />
         {amount}
       </span>
@@ -263,25 +263,25 @@ const LeaderboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 pt-16">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <h1 className="text-2xl font-bold text-gray-900">{t("leaderboard")}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("leaderboard")}</h1>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                   <SelectValue placeholder={t("selectCategory")} />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allCategories")}</SelectItem>
-                  <SelectItem value="tasks">{t("tasksCompleted")}</SelectItem>
-                  <SelectItem value="streaks">{t("streakDays")}</SelectItem>
-                  <SelectItem value="goals">{t("goalsAchieved")}</SelectItem>
+                <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
+                  <SelectItem value="all" className="dark:text-white dark:focus:bg-gray-600">{t("allCategories")}</SelectItem>
+                  <SelectItem value="tasks" className="dark:text-white dark:focus:bg-gray-600">{t("tasksCompleted")}</SelectItem>
+                  <SelectItem value="streaks" className="dark:text-white dark:focus:bg-gray-600">{t("streakDays")}</SelectItem>
+                  <SelectItem value="goals" className="dark:text-white dark:focus:bg-gray-600">{t("goalsAchieved")}</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                 <Filter size={16} />
                 {t("filter")}
               </Button>
@@ -300,28 +300,28 @@ const LeaderboardPage = () => {
           className="mb-8"
         >
           <div className="flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-6">{t("topPerformers")}</h2>
+            <h2 className="text-xl font-bold mb-6 dark:text-white">{t("topPerformers")}</h2>
             <div className="flex flex-col md:flex-row items-end justify-center gap-4 w-full">
               {/* 2nd Place */}
               <div className="flex flex-col items-center">
-                <Avatar className="h-16 w-16 border-2 border-gray-200">
+                <Avatar className="h-16 w-16 border-2 border-gray-200 dark:border-gray-600">
                   <AvatarImage
                     src={topUsers[1].avatar}
                     alt={topUsers[1].name}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="dark:bg-gray-700 dark:text-white">
                     {topUsers[1].name.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="mt-2 text-center">
-                  <div className="font-semibold">{topUsers[1].name}</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="font-semibold dark:text-white">{topUsers[1].name}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-300">
                     {topUsers[1].points} {t("pts")}
                   </div>
                 </div>
-                <div className="bg-gray-100 h-24 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
-                  <Medal className="h-8 w-8 text-gray-400" />
-                  <span className="text-xl font-bold ml-1">2</span>
+                <div className="bg-gray-100 dark:bg-gray-700 h-24 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
+                  <Medal className="h-8 w-8 text-gray-400 dark:text-gray-300" />
+                  <span className="text-xl font-bold ml-1 dark:text-white">2</span>
                 </div>
               </div>
   
@@ -329,48 +329,48 @@ const LeaderboardPage = () => {
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <Crown className="h-6 w-6 text-yellow-500 absolute -top-8 left-1/2 transform -translate-x-1/2" />
-                  <Avatar className="h-20 w-20 border-4 border-yellow-400">
+                  <Avatar className="h-20 w-20 border-4 border-yellow-400 dark:border-yellow-500">
                     <AvatarImage
                       src={topUsers[0].avatar}
                       alt={topUsers[0].name}
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className="dark:bg-gray-700 dark:text-white">
                       {topUsers[0].name.substring(0, 2)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="mt-2 text-center">
-                  <div className="font-semibold">{topUsers[0].name}</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="font-semibold dark:text-white">{topUsers[0].name}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-300">
                     {topUsers[0].points} {t("pts")}
                   </div>
                 </div>
-                <div className="bg-yellow-100 h-32 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
+                <div className="bg-yellow-100 dark:bg-yellow-900/30 h-32 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
                   <Medal className="h-8 w-8 text-yellow-500" />
-                  <span className="text-xl font-bold ml-1">1</span>
+                  <span className="text-xl font-bold ml-1 dark:text-white">1</span>
                 </div>
               </div>
   
               {/* 3rd Place */}
               <div className="flex flex-col items-center">
-                <Avatar className="h-16 w-16 border-2 border-gray-200">
+                <Avatar className="h-16 w-16 border-2 border-gray-200 dark:border-gray-600">
                   <AvatarImage
                     src={topUsers[2].avatar}
                     alt={topUsers[2].name}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="dark:bg-gray-700 dark:text-white">
                     {topUsers[2].name.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="mt-2 text-center">
-                  <div className="font-semibold">{topUsers[2].name}</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="font-semibold dark:text-white">{topUsers[2].name}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-300">
                     {topUsers[2].points} {t("pts")}
                   </div>
                 </div>
-                <div className="bg-orange-100 h-16 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
+                <div className="bg-orange-100 dark:bg-orange-900/30 h-16 w-full md:w-24 rounded-t-lg mt-2 flex items-center justify-center">
                   <Medal className="h-8 w-8 text-orange-500" />
-                  <span className="text-xl font-bold ml-1">3</span>
+                  <span className="text-xl font-bold ml-1 dark:text-white">3</span>
                 </div>
               </div>
             </div>
@@ -383,10 +383,10 @@ const LeaderboardPage = () => {
           className="mb-6"
           onValueChange={setActiveTab}
         >
-          <TabsList className="grid w-full md:w-auto grid-cols-3 mb-6">
-            <TabsTrigger value="weekly">{t("weekly")}</TabsTrigger>
-            <TabsTrigger value="monthly">{t("monthly")}</TabsTrigger>
-            <TabsTrigger value="alltime">{t("allTime")}</TabsTrigger>
+          <TabsList className="grid w-full md:w-auto grid-cols-3 mb-6 dark:bg-gray-700">
+            <TabsTrigger value="weekly" className="dark:text-white dark:data-[state=active]:bg-gray-600">{t("weekly")}</TabsTrigger>
+            <TabsTrigger value="monthly" className="dark:text-white dark:data-[state=active]:bg-gray-600">{t("monthly")}</TabsTrigger>
+            <TabsTrigger value="alltime" className="dark:text-white dark:data-[state=active]:bg-gray-600">{t("allTime")}</TabsTrigger>
           </TabsList>
   
           <TabsContent value="weekly" className="space-y-6">
@@ -396,44 +396,44 @@ const LeaderboardPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="border-none shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+              <Card className="border-none shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 text-white dark:bg-gray-800 dark:text-white">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="flex items-center mb-4 md:mb-0">
-                      <Avatar className="h-16 w-16 border-2 border-white mr-4">
+                      <Avatar className="h-16 w-16 border-2 border-white dark:border-gray-600 mr-4">
                         <AvatarImage
                           src={currentUser.avatar}
                           alt={currentUser.name}
                         />
-                        <AvatarFallback>
+                        <AvatarFallback className="dark:bg-gray-700 dark:text-white">
                           {currentUser.name.substring(0, 2)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="text-lg font-semibold">{t("yourPosition")}</h3>
-                        <p className="text-blue-100">
+                        <h3 className="text-lg font-semibold dark:text-white">{t("yourPosition")}</h3>
+                        <p className="text-blue-100 dark:text-blue-200">
                           {t("keepGoingToClimb")}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-8">
                       <div className="text-center">
-                        <div className="text-3xl font-bold">
+                        <div className="text-3xl font-bold dark:text-white">
                           {currentUser.rank}
                         </div>
-                        <div className="text-sm text-blue-200">{t("rank")}</div>
+                        <div className="text-sm text-blue-200 dark:text-blue-300">{t("rank")}</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold">
+                        <div className="text-3xl font-bold dark:text-white">
                           {currentUser.points}
                         </div>
-                        <div className="text-sm text-blue-200">{t("points")}</div>
+                        <div className="text-sm text-blue-200 dark:text-blue-300">{t("points")}</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold">
+                        <div className="text-3xl font-bold dark:text-white">
                           {currentUser.tasksCompleted}
                         </div>
-                        <div className="text-sm text-blue-200">{t("tasks")}</div>
+                        <div className="text-sm text-blue-200 dark:text-blue-300">{t("tasks")}</div>
                       </div>
                     </div>
                   </div>
@@ -447,10 +447,10 @@ const LeaderboardPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
             >
-              <Card className="border-none shadow-md">
+              <Card className="border-none shadow-md dark:bg-gray-800 dark:shadow-gray-700">
                 <CardHeader>
-                  <CardTitle>{t("weeklyLeaderboard")}</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="dark:text-white">{t("weeklyLeaderboard")}</CardTitle>
+                  <CardDescription className="dark:text-gray-300">
                     {t("rankingsBasedOnWeek")}
                   </CardDescription>
                 </CardHeader>
@@ -458,23 +458,23 @@ const LeaderboardPage = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-4 font-medium text-gray-500">
+                        <tr className="border-b dark:border-gray-600">
+                          <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-300">
                             {t("rank")}
                           </th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-500">
+                          <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-300">
                             {t("user")}
                           </th>
-                          <th className="text-right py-3 px-4 font-medium text-gray-500">
+                          <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-300">
                             {t("points")}
                           </th>
-                          <th className="text-right py-3 px-4 font-medium text-gray-500">
+                          <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-300">
                             {t("tasks")}
                           </th>
-                          <th className="text-right py-3 px-4 font-medium text-gray-500">
+                          <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-300">
                             {t("streak")}
                           </th>
-                          <th className="text-right py-3 px-4 font-medium text-gray-500">
+                          <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-300">
                             {t("badges")}
                           </th>
                         </tr>
@@ -483,11 +483,11 @@ const LeaderboardPage = () => {
                         {users.map((user) => (
                           <tr
                             key={user.id}
-                            className={`border-b hover:bg-gray-50 ${user.id === currentUser.id ? "bg-blue-50" : ""}`}
+                            className={`border-b hover:bg-gray-50 dark:hover:bg-gray-700 ${user.id === currentUser.id ? "bg-blue-50 dark:bg-blue-900/20" : ""}`}
                           >
                             <td className="py-3 px-4">
                               <div className="flex items-center">
-                                <span className="font-semibold mr-2">
+                                <span className="font-semibold mr-2 dark:text-white">
                                   {user.rank}
                                 </span>
                                 {renderRankChange(
@@ -503,18 +503,18 @@ const LeaderboardPage = () => {
                                     src={user.avatar}
                                     alt={user.name}
                                   />
-                                  <AvatarFallback>
+                                  <AvatarFallback className="dark:bg-gray-700 dark:text-white">
                                     {user.name.substring(0, 2)}
                                   </AvatarFallback>
                                 </Avatar>
-                                <span className="font-medium">{user.name}</span>
+                                <span className="font-medium dark:text-white">{user.name}</span>
                                 {user.rank <= 3 && (
                                   <span className="ml-2">
                                     {user.rank === 1 && (
                                       <Crown className="h-4 w-4 text-yellow-500" />
                                     )}
                                     {user.rank === 2 && (
-                                      <Medal className="h-4 w-4 text-gray-400" />
+                                      <Medal className="h-4 w-4 text-gray-400 dark:text-gray-300" />
                                     )}
                                     {user.rank === 3 && (
                                       <Medal className="h-4 w-4 text-orange-500" />
@@ -523,13 +523,13 @@ const LeaderboardPage = () => {
                                 )}
                               </div>
                             </td>
-                            <td className="py-3 px-4 text-right font-semibold">
+                            <td className="py-3 px-4 text-right font-semibold dark:text-white">
                               {user.points}
                             </td>
-                            <td className="py-3 px-4 text-right">
+                            <td className="py-3 px-4 text-right dark:text-white">
                               {user.tasksCompleted}
                             </td>
-                            <td className="py-3 px-4 text-right">
+                            <td className="py-3 px-4 text-right dark:text-white">
                               {user.streakDays} {t("days")}
                             </td>
                             <td className="py-3 px-4 text-right">
@@ -563,7 +563,7 @@ const LeaderboardPage = () => {
                                     ) : null;
                                   })}
                                 {user.badges.length > 3 && (
-                                  <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-500">
+                                  <div className="h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">
                                     +{user.badges.length - 3}
                                   </div>
                                 )}
@@ -575,8 +575,8 @@ const LeaderboardPage = () => {
                     </table>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t pt-4">
-                  <div className="w-full text-center text-sm text-gray-500">
+                <CardFooter className="border-t dark:border-gray-700 pt-4">
+                  <div className="w-full text-center text-sm text-gray-500 dark:text-gray-300">
                     {t("rankingsUpdate")}
                   </div>
                 </CardFooter>
@@ -585,15 +585,15 @@ const LeaderboardPage = () => {
           </TabsContent>
   
           <TabsContent value="monthly">
-            <Card className="border-none shadow-md">
+            <Card className="border-none shadow-md dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader>
-                <CardTitle>{t("monthlyLeaderboard")}</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">{t("monthlyLeaderboard")}</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   {t("rankingsBasedOnMonth")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-300">
                   {t("monthlyLeaderboardData")}
                 </div>
               </CardContent>
@@ -601,15 +601,15 @@ const LeaderboardPage = () => {
           </TabsContent>
   
           <TabsContent value="alltime">
-            <Card className="border-none shadow-md">
+            <Card className="border-none shadow-md dark:bg-gray-800 dark:shadow-gray-700">
               <CardHeader>
-                <CardTitle>{t("allTimeLeaderboard")}</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">{t("allTimeLeaderboard")}</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   {t("rankingsBasedOnAllTime")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-300">
                   {t("allTimeLeaderboardData")}
                 </div>
               </CardContent>
